@@ -53,21 +53,32 @@ class Subscribe
   }
   public function fix()
   {
-    $get = DB::table('ext_rsses')->get();
+ {
+    $getc = DB::table('ext_rsses')->get();
+    $get = DB::table('ext_rsses')->take(500)->get();
     foreach ($get as $key => $value) {
+    //  dd($value->title);
+if (DB::table('users')->where('name', $value->title)->exists() == 1) {
+    $user = DB::table('users')->where('name', $value->title)->first();
 
-      $user = DB::table('users')->where('name', $value->title)->first();
     $action = DB::table('following')->insert([
           'my_id'          => $value->user_id,
           'follower_id'    => $user->id,
           'status'         => 1
       ]);
+      if ($action) {
+        DB::table('ext_rsses')->where(["title" => $value->title, 'user_id' =>$value->user_id])->delete();
 
+      }
+      }
+      DB::table('ext_rsses')->where(["title" => $value->title, 'user_id' =>$value->user_id])->delete();
 
-    }
+  }
 
-    \Schema::dropIfExists('ext_rsses');
-    var_dump($action);
+  $all = count($getc);
+  echo 'A total of '.$all." undone, the first 500 done, refresh till done";
+  //  \Schema::dropIfExists('ext_rsses');
+  //  var_dump($action);
 //return;
   }
 public function extract($url)

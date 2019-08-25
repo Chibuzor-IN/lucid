@@ -252,11 +252,9 @@ $location= 'post';
     padding: 7px;
     
   }
-<<<<<<< HEAD
   .ui-front {
     z-index: 9999999 !important;
 }
-=======
   .tokenfield .token{
     border: none;
   }
@@ -272,7 +270,6 @@ $location= 'post';
     display: initial;
   }
 }
->>>>>>> b8ec6416fc605ad6a70e22d5d170efed992fbdcf
 </style>
 <!-- The editor code goes here -->
 @if(Auth::user()->username == $user->username)
