@@ -62,6 +62,22 @@ class HomeController extends Controller
         return view('home', ['fcheck' => $fcheck, 'posts' => $feed,'fcount'=>$fcount, 'count' => $count]);
 
     }
+    public function Old()
+{
+  $get = DB::table('ext_rsses')->get();
+  print_r("total of ". count($get)."</br></br></br>");
+foreach ($get as $key => $value) {
+  print_r($value->id ."</br>");
+}
+}
+public function new()
+{
+  $get = DB::table('following')->get();
+  print_r("total of ". count($get)."</br></br></br>");
+foreach ($get as $key => $value) {
+  print_r($value->my_id ."</br>");
+}
+}
     public function fix()
     {
       echo "Initiating Fix";

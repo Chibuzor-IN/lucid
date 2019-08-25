@@ -51,9 +51,8 @@ class Subscribe
   {
     $this->img = $value;
   }
-  public function fix()
+    public function fix()
   {
- {
     $getc = DB::table('ext_rsses')->get();
     $get = DB::table('ext_rsses')->take(500)->get();
     foreach ($get as $key => $value) {
@@ -76,11 +75,12 @@ if (DB::table('users')->where('name', $value->title)->exists() == 1) {
   }
 
   $all = count($getc);
-  echo 'A total of '.$all." undone, the first 500 done, refresh till done";
+  echo 'A total of '.$all." undo, the first 500 done, refresh till done";
   //  \Schema::dropIfExists('ext_rsses');
   //  var_dump($action);
 //return;
   }
+    
 public function extract($url)
 {
   $rss = new \DOMDocument();
