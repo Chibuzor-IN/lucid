@@ -48,7 +48,7 @@ $location= 'old-post';
       <p class="">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
       </p>
-      <img src="{{ asset('img/my-post.png') }}" alt="" class="">
+      <img src="{{ secure_asset('img/my-post.png') }}" alt="" class="">
       <div class="mt-3">
         <p>
           <i class="icon ion-md-happy p-1"> 3</i>

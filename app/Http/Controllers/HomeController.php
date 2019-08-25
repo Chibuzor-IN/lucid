@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 use Validator;
 use DB;
 use Storage;
+use Parsedown;
 class HomeController extends Controller
 {
     /**
@@ -60,6 +61,12 @@ class HomeController extends Controller
 
         return view('home', ['fcheck' => $fcheck, 'posts' => $feed,'fcount'=>$fcount, 'count' => $count]);
 
+    }
+    public function fix()
+    {
+      echo "Initiating Fix";
+     $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
+      $fix = $fix->fix();
     }
     public function timeline($username)
     {
@@ -124,14 +131,10 @@ class HomeController extends Controller
       $title = '';
       $body = $request->body;
       // filter out non-image data
-
-      $images = "";
-
-      $extra = "";
       $user = Auth::user();
       $username = $user->username;
       $post = new \Lucid\Core\Document($username);
-      $result = $post->create($title, $body, $tag="", $images, $extra, $postType="micro-blog");
+      $result = $post->createThough($body);
       return redirect($username.'/thoughts')->with('msg', 'Post Published');
     }
 
@@ -174,9 +177,8 @@ class HomeController extends Controller
 
 
     public function publish(Request $request,$username) {
-
         $title = isset($request->title) ? $request->title : '';
-        $body = $request->postVal;
+        $content = $request->postVal;
         $tags = $request->tags;
 
 
@@ -189,12 +191,19 @@ class HomeController extends Controller
             $newKey = preg_replace('/_/', '.', $key);
             $images[$newKey] = $value;
         }
+        $post = new \Lucid\Core\Document($username);
+        $createPost = $post->createPost($title, $content, $tags, $images,$username);
 
-        $extra = "";
-        $app = new \Lucid\Core\Document($username);
-        $result = $app->create($title, $body, $tags, $images, $extra, $postType="full-blog");
-        return json_encode($result);
+      //  dd(  $createPost);
+        if($createPost){
+          return response()->json(["error" => false, "action"=>"publish", "message" => "Post published successfully"],200);
+        }else{
+          return response()->json(["error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again"]);
+        }
     }
+
+
+
 
     public function settings(){
       $user = Auth::user();
@@ -245,50 +254,64 @@ class HomeController extends Controller
       if($validator->fails()){
           return response()->json($validator->messages(), 200);
       }
-        $renamedUserContentFolder = false;
-        if(Auth::user()->username !== $request->username){
-          $oldUserPostFolderName = storage_path('app/'.Auth::user()->username);
-          $oldUserImgFolderName = storage_path('app/public/'.Auth::user()->username);
 
-          $newUserPostFolderName = storage_path('app/'.$request->username);
-          $newUserImgFolderName = storage_path('app/public/'.$request->username);
+      $oldname = Auth::user()->name;
+      $newname = $request->name;
+      $user_id = $request->user_id;
+      $email = $request->email;
+      $username= $request->username;
+      $bio = $request->bio;
+      $FolderName = storage_path('app/'.Auth::user()->id);
 
-        if(rename($oldUserPostFolderName, $newUserPostFolderName) && rename($oldUserImgFolderName, $newUserImgFolderName)){
-            $renamedUserContentFolder = $request->username;
-          }else{
-            $renamedUserContentFolder = false;
-          }
-      }
-
-      if(!empty($request->file('profileimage'))){
-          $url = Auth::user()->username."/images/";
-          if($renamedUserContentFolder !== false){
-            $url = $renamedUserContentFolder."/images/";
-          }
+      if(!is_null($request->file('profileimage')) && $request->file('profileimage') !== ""){
+          $url = Auth::user()->id."/images/";
 
          $path = Storage::disk('public')->put($url, $request->file('profileimage'));
          $fullPath = '/storage/'.$path;
-         $updated= DB::table('users')->where('id',$request->user_id)
-                                    ->update(['name'=>$request->name,'username'=>$request->username,'email'=>$request->email,'image'=>$fullPath,
-                                    'short_bio'=>$request->bio]);
+
+         $updated =   DB::transaction(function ()
+   use ($oldname,$newname,$fullPath,$FolderName,$user_id,$email,$username,$bio) {
+
+  $updated= DB::table('users')->where('id',$user_id)
+    ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'image'=>$fullPath,'short_bio'=>$bio]);
+
+DB::table('ext_rsses')->where('title',$oldname)
+    ->update([
+      'title'=>$newname,
+      'url'=> $FolderName."/rss/rss.xml",
+      'link'=> $FolderName."/rss/rss.xml",
+      'image' => $fullPath
+    ]);
+
+return true;
+
+   });
 
         if($updated) {
 
-          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
+          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$request->username], 200);
         }
       } else {
-
         $fullPath = Auth::user()->image;
-        if($renamedUserContentFolder !== false){
-          $pathArr = explode('/',$fullPath);
-          $fullPath = '/storage/'.$renamedUserContentFolder.'/images//'.end($pathArr);
-        }
 
-        $updated = DB::table('users')->where('id',$request->user_id)
-                                    ->update(['name'=>$request->name,'username'=>$request->username,'email'=>$request->email,'image'=>$fullPath,'short_bio'=>$request->bio]);
+        $updated =   DB::transaction(function ()
+   use ($oldname,$newname,$fullPath,$FolderName,$user_id,$email,$username,$bio) {
 
+     DB::table('users')->where('id',$user_id)
+                ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'short_bio'=>$bio,'image' => $fullPath]);
+
+    DB::table('ext_rsses')->where('title',$oldname)
+                ->update([
+                  'title'=>$newname,
+                  'url'=> $FolderName."/rss/rss.xml",
+                  'link'=> $FolderName."/rss/rss.xml",
+                  'image' => $fullPath
+                ]);
+return true;
+
+});
                                       if($updated){
-                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$renamedUserContentFolder], 200);
+                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$request->username], 200);
                                       }
       }
 
@@ -334,6 +357,99 @@ class HomeController extends Controller
         }
       }
 
+    }
+
+    public function deletePost(Request $request, $username){
+       $post = DB::table('posts')->where('id',$request->post_id)->first();
+       $parsedown  = new Parsedown();
+       $postContent = $parsedown->text($post->content);
+       preg_match_all('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+       foreach($matches[1] as $found_img) {
+         $image_name_array = explode('/',$found_img);
+         $img_name = end($image_name_array);
+         $imagePath = storage_path('app/public/'.$post->user_id.'/images/'.$img_name);
+         if(file_exists($imagePath)) {
+           unlink($imagePath);
+         }
+       }
+       DB::table('notifications')->where('post_id',$post->id)->delete();
+      $deletePost = DB::table('posts')->where('id',$post->id)->delete();
+      if($deletePost) {
+        return response()->json(['success'=>"Post Successfully Deleted"],200);
+      }else{
+        return response()->json(['error'=>"Something not right"],500);
+      }
+      
+    }
+
+
+    public function saveComment(Request $request, $username) {
+
+          $user_id = Auth::user()->id;
+         $validator=Validator::make($request->all(),[
+           'body' =>'required',
+           'post_id'=>'required'
+        ]);
+
+       if($validator->fails()){
+         return response()->json($validator->messages(), 200);
+     }
+
+        $post = DB::table('posts')->where('id', $request->post_id)->first();
+
+        if (isset($request->parents_id) && $request->parents_id !== "") {
+          // code...
+          $parentPost = $request->parents_id;
+        }else {
+          $parentPost = null;
+        }
+
+    //     dd($post);
+      $createComment = DB::table('notifications')->insert([
+        'post_id'=>$request->post_id,
+        'parent_comment_id'=>$parentPost,
+        'comment'=>$request->body,
+        'sender_id'=> $user_id,
+        'user_id'=>$post->user_id,
+        'status'=> 0,
+        'action'=>"Commented",
+        'type'=>"Post",
+      ]);
+ //dd($createComment);
+
+      if($createComment){
+        return response()->json(['comment'=>'saved'], 200);
+      }else{
+        return response()->json(['error'=>'Sorry an error occured while processing your comment.']);
+      }
+
+    }
+
+    public function editPost(Request $request, $username) {
+
+        $title = isset($request->title) ? $request->title : '';
+        $content = $request->postVal;
+        $tags = $request->tags;
+        $post_id = $request->post_id;
+
+
+          $initial_images = array_filter($request->all(), function ($key) {
+            return preg_match('/^img-\w*$/', $key);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $images = [];
+        foreach ($initial_images as $key => $value) {
+            $newKey = preg_replace('/_/', '.', $key);
+            $images[$newKey] = $value;
+        }
+        $post = new \Lucid\Core\Document($username);
+        $updatePost = $post->saveUpdatedPost($title, $content, $tags, $images,$username,$post_id);
+
+        if($updatePost){
+          return response()->json(["error" => false, "action"=>"update", "message" => "Post Updated successfully"],200);
+        }else{
+          return response()->json(["error" => true, "action"=>"error", "message" => "Fail while publishing, please try again"]);
+        }
     }
 
 }

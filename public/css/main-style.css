@@ -390,3 +390,34 @@ ul.footer-links li a {
   display: block;
   opacity: 1;
 }
+
+.notification-menu {
+    box-sizing: border-box;
+    width: 80vw;
+}
+@media (min-width: 576px) and (max-width: 991.98px) { 
+    .notification-menu {
+        width: 60vw;
+    }
+ }
+
+ @media (min-width: 992px) { 
+    .notification-menu {
+        width: 40vw;
+    }
+ }
+
+ .timeline-img {
+     width: 50px !important;
+     height: 50px !important;
+     object-fit: cover !important;
+     border-radius: 50% !important;
+ }
+
+ /* remove ugly outline on select elements*/
+ select:hover, select:active{
+     outline: none;
+ }
+ .cursor-pointer{
+     cursor: pointer;
+ }

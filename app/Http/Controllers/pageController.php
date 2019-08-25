@@ -6,10 +6,14 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Parsedown;
+use URL;
+use Carbon\Carbon;
 class pageController extends Controller
 {
     public function user($username) {
         $user_exists = DB::table('users')->where('name',$username)->orWhere('username',$username)->get();
+      //  dd($user_exists);
         if(!isset($user_exists[0])) {
             return false;
         }
@@ -22,14 +26,12 @@ class pageController extends Controller
             return abort(404);
         }
         $user = $this->user($username);
-
         if(Auth::user() && Auth::user()->username == $username){
                 $user = Auth::user();
                 $username = $user->username;
 
                 $post = new \Lucid\Core\Document($username);
-                $following = $post->subscription();
-                $follower = $post->subscriber();
+
                 $post = $post->Feeds();
             //$post =[];
                 $sub = new \Lucid\Core\Subscribe($username);
@@ -51,14 +53,14 @@ class pageController extends Controller
 
 
   //dd($fcheck);
-                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count, 'following' => $following, 'follower' => $follower]);
+                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count]);
 
         }else {
 
 
             $app = new \Lucid\Core\Document($username);
             $feed =$app->Feeds();
-
+          //  dd(  $feed);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
@@ -87,22 +89,33 @@ class pageController extends Controller
             //  $follower = $app->subscription();
                //dd($follower);
 
-              $userposts=$app->get('posts');
+               $userposts=$app->getPosts($username);
 
-              return view('home', ['posts' => $feed,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count,"userposts"=>$userposts]);
+              return view('home', ['userposts' => $userposts,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
         }
 
 
     }
 
-    public function singlePostPage($username,$postTitle){
+    public function getPostData($username,$postSlug) {
+      $app = new \Lucid\Core\Document($username);
+      $post=$app->getPost($username,$postSlug);
+      if(!$post){
+          return response()->json(['error'=>'post not found'],404);
+      }
+      return response()->json(['data'=>$post]);
+    }
+
+    public function singlePostPage($username,$postSlug){
         if(!$this->user($username)) {
             return abort(404);
         }
         $user = $this->user($username);
         $app  = new \Lucid\Core\Document($username);
-        $post=$app->getPost($postTitle);
+      //  $id = base64_decode($id);
+
+        $post=$app->getPost($username,$postSlug);
 
         if(!$post){
             return redirect('/'.$username.'/home');
@@ -137,7 +150,29 @@ class pageController extends Controller
         return view('single-blog-post',compact('post','user'),['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
+
+
+    public function clean($string) {
+      $string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+
+      return preg_replace('/[^A-Za-z0-9\-]/', '', $string); // Removes special chars.
+    }
+
+    public function trim_words($string,$limit,$break=".",$pad="...")
+    {
+        if (strlen($string) <= $limit) return $string;
+
+        if (false !== ($breakpoint = strpos($string, $break, $limit))) {
+            if ($breakpoint < strlen($string) - 1) {
+                $string = substr($string, 0, $breakpoint) . $pad;
+            }
+        }
+
+        return $string;
+    }
+
     public function posts($username){
+
             if(Auth::user() && $username == Auth::user()->username){
 
             if(!$this->user($username)) {
@@ -146,7 +181,9 @@ class pageController extends Controller
 
             $user = $this->user($username);
             $app  = new \Lucid\Core\Document($username);
-            $posts=$app->get('posts');
+            $posts=$app->getPosts();
+
+            //dd($posts);
             // follower and following Count
             $sub = new \Lucid\Core\Subscribe($username);
             $fcount =$sub->myfollowercount();
@@ -217,7 +254,7 @@ class pageController extends Controller
         $contact = DB::table('contact_settings')->where('user_id',$user->id)->first();
 
 
-        return view('contact',compact('user','posts','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
+        return view('contact',compact('user','contact'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
     }
 
 
@@ -230,7 +267,7 @@ class pageController extends Controller
 
       $user = $this->user($username);
       $post = new \Lucid\Core\Document($username);
-      $post = $post->get('micro-blog-posts');
+      $post = $post->Thoughts();
       // follower and following Count
       $sub = new \Lucid\Core\Subscribe($username);
       $fcount =$sub->myfollowercount();
@@ -389,4 +426,153 @@ class pageController extends Controller
   }
 
 
+  public function comments($username, $post_id) {
+
+    $comments = DB::table('notifications')
+                ->join('users','notifications.sender_id','=','users.id')
+                ->select('notifications.*','users.username','users.email','users.image')
+                ->where('notifications.post_id',$post_id)
+                ->orderBy('notifications.id','DESC')
+                ->get();
+    $carbon =  new Carbon;
+    return view('comments')->with(['comments'=>$comments,'carbon'=>$carbon]);
+
+  }
+  public function notification(Request $request, $username)
+  {
+
+    if($request->view != '')
+
+    {
+      DB::table('notifications')
+            ->where(['user_id' => Auth::user()->id, 'status' => 0 ] )
+            ->update(['status' => 1]);
+
+    }
+
+    $user =   DB::table('users')->where('username', $username)->first();
+    $notif = DB::table('notifications')
+                ->where(['user_id' => Auth::user()->id] )
+                ->where('sender_id', "!=", Auth::user()->id)
+                ->get();
+
+              //  dd($notif);
+    $output = '';
+  if (count($notif) > 0) {
+
+    foreach ($notif as $notifs) {
+      if ($notifs->type == "Post") {
+
+    $notif = DB::table('notifications')
+                ->join('users','notifications.sender_id','=','users.id')
+                ->join('posts','notifications.post_id','=','posts.id')
+                ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
+                ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id ] )
+                ->where('notifications.sender_id', "!=", Auth::user()->id)
+                ->orderBy('notifications.id','DESC')
+                ->first();
+
+//dd();
+    if ($notifs->action == 'Commented') {
+            $output .='
+            <div class="post-content border p-3">
+              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <div class="post-content-body">
+                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.URL::to('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+              </div>
+            </div>';
+
+          }
+
+  }
+    if ($notifs->type == 'Following') {
+      $notif = DB::table('notifications')
+                  ->join('users','notifications.sender_id','=','users.id')
+                  ->select('notifications.*', 'users.username','users.email','users.image')
+                  ->where(['notifications.user_id' => Auth::user()->id] )
+                  ->where('notifications.sender_id', "!=", Auth::user()->id)
+                  ->orderBy('notifications.id','DESC')
+                  ->first();
+                //  dd($notif);
+
+            $output .='
+            <div class="post-content border p-3">
+              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <div class="post-content-body">
+                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> is now Following you
+              </div>
+            </div>';
+}
+    }
+
+  }else{
+        $output .= '
+        <div class="post-content border p-3"><div class="post-content-body">
+            <p> No Notification Found</p>
+          </div>
+        </div>';
+    }
+
+    $notif = DB::table('notifications')
+                ->where(['user_id' => Auth::user()->id, 'status' => 0 ] )
+                ->where('sender_id', "!=", Auth::user()->id)
+                ->get();
+
+    $count = count($notif);
+
+    //dd($count);
+    $data = array(
+       'notification' => $output,
+       'unseen_notification'  => $count
+    );
+ return response()->json($data);
+
+    }
+
+
+  public function filterPost($method) {
+
+    if($method == "Recent"){
+      
+      $posts = DB::table('posts')
+                ->join('users','posts.user_id','=','users.id')
+                ->select('posts.*','users.image','users.username')
+                ->orderBy('posts.id','DESC')
+                ->get();
+      if(!empty($posts)){
+
+        $allPost = [];
+      foreach($posts as $post){
+        $parsedown  = new Parsedown();
+        $postContent = $parsedown->text($post->content);
+        preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+        $first_img = "";
+        if (isset($matches[1])) {
+            // there are images
+            $first_img = $matches[1];
+            // strip all images from the text
+            $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+        }
+        $createdAt = Carbon::parse($post->created_at);
+        $content['title'] = $post->title;
+        $content['body']  = $this->trim_words($postContent, 100);
+        $content['tags']  = $post->tags;
+        $content['slug']  = $this->clean($post->slug);
+        $content['image'] = $first_img;
+        $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+        $content['id'] = $post->id;
+        $content['username'] = $post->username;
+        $content['user_img'] = $post->image;
+        
+        array_push($allPost,$content);
+      }
+      return view('filtered-posts')->with(['posts'=>$allPost]);
+
+      }
+    }elseif($method =="Popular"){
+
+      
+
+    }
+  }
 }

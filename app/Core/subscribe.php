@@ -2,8 +2,9 @@
 namespace Lucid\Core;
 use Auth;
 use Storage;
-use Lucid\ext_rss;
+use Lucid\Following;
 use DB;
+
 
 /**
  *
@@ -50,47 +51,48 @@ class Subscribe
   {
     $this->img = $value;
   }
+  public function fix()
+  {
+    $get = DB::table('ext_rsses')->get();
+    foreach ($get as $key => $value) {
+
+      $user = DB::table('users')->where('name', $value->title)->first();
+    $action = DB::table('following')->insert([
+          'my_id'          => $value->user_id,
+          'follower_id'    => $user->id,
+          'status'         => 1
+      ]);
+
+
+    }
+
+    \Schema::dropIfExists('ext_rsses');
+    var_dump($action);
+//return;
+  }
 public function extract($url)
 {
   $rss = new \DOMDocument();
-//dd(storage_path('app/'.$url."/rss/rss.xml"));
-  if (!file_exists(storage_path('app/'.$url."/rss/rss.xml"))) {
-      } else {
+  $user = DB::table('users')->where('username', $url)->first();
+  $me = Auth::user();
 
-        //$url = storage_path('app/'.$url."/rss/rss.xml");
-
-      $rss->load(trim(storage_path('app/'.$url."/rss/rss.xml")));
-     //   dd($rss );
-      foreach ($rss->getElementsByTagName('channel') as $r) {
-        $title = $r->getElementsByTagName('title')->item(0)->nodeValue;
-        $link = $r->getElementsByTagName('link')->item(0)->nodeValue;
-        $description = $r->getElementsByTagName('description')->item(0)->nodeValue;
-
-        $image = isset($r->getElementsByTagName('url')->item(0)->nodeValue) ?
-                  $r->getElementsByTagName('url')->item(0)->nodeValue : '';
-
-        $lastbuild = $r->getElementsByTagName('lastBuildDate')->item(0)->nodeValue;
-
-
-      }
-
-              $this->setSubName($title);
-              $this->setSubRss($url);
-              $this->setSubDesc($description);
-              $this->setSubImg($image);
-              $this->setSubLink($link);
-
-                $this->findOrCreateRss(
-                  $this->name,
-                  storage_path('app/'.$url."/rss/rss.xml"),
-                  $this->desc,
-                  $this->link,
-                  $this->img,
-                  $lastbuild
-
+                $follow = $this->findOrCreateRss(
+                  $me['id'],
+                  $user->id,
+                  0
                 );
 
-              }
+                if ($follow) {
+                  $createComment = DB::table('notifications')->insert([
+
+                    'sender_id'=> $me['id'],
+                    'user_id'=> $user->id,
+                    'status'=> 0,
+                    'action'=>"Followed",
+                    'type'=>"Following",
+                  ]);
+                }
+
   }
 
   public function extractPub($url)
@@ -139,24 +141,16 @@ public function extract($url)
               //  }
     }
 
-  public function findOrCreateRss($name, $url, $desc, $link, $img,$lastbuild){
-      //$rss       =   ext_rss::where('title', $name)->first();
-     // if($rss){
-    //      return $rss;
-     // }
+  public function findOrCreateRss($me, $them, $stat){
+
       $user = Auth::user();
 
-          return ext_rss::insert([
-              'user_id'          => $user['id'],
-              'title'            => $name,
-              'url'              => $url,
-              'description'      => $desc,
-              'image'            => $img,
-              'link'             => $link,
-              'lastBuildDate'    => $lastbuild
-          ]);
+    return DB::table('following')->insert([
+          'my_id'          => $me,
+          'follower_id'    => $them,
+          'status'         => $stat
+      ]);
 
-          return $rss;
   }
 
 
@@ -236,13 +230,13 @@ public function extract($url)
     }
   public function unfollow($del)
   {
-$fuser= DB::table('users')->where('username', $del)->get('name')->first();
+$fuser= DB::table('users')->where('name', $del)->get('id')->first();
 
 $user = Auth::user();
 
-  $file= DB::table('ext_rsses')->where('user_id', $user->id)->where('title', $fuser->name)->delete();
+  $file= DB::table('following')->where('my_id', $user->id)->where('follower_id', $fuser->id)->delete();
 
-  //dd($file);
+//  dd($file);
 return $file;
 
   }
@@ -251,11 +245,12 @@ return $file;
 
     $user= DB::table('users')->where('username', $this->user)->get('id')->first();
   //  $user=json_decode($user,true);
-    $name= DB::table('ext_rsses')->where('user_id', $user->id)->get('title');
+    $name= DB::table('following')->where('my_id', $user->id)->get('follower_id');
 $fuser = [];
-//dd($name);
-    foreach($name as $key => $name){
-      $user= DB::table('users')->where('name', $name->title)->get();
+    foreach($name as $key => $id){
+    //  dd($id->follower_id);
+      $user= DB::table('users')->where('id', $id->follower_id)->get();
+    //  dd(  $user);
       foreach($user as $key => $user){
     //  $content['name'] = $user->name;
     array_push($fuser, $user->name);
@@ -272,13 +267,14 @@ $fuser = [];
   {
   //  $user = Auth::user();
       $user= DB::table('users')->where('username', $this->user)->first();
-      $data= ext_rss::where('title', $user->name)->get();
+      $data= DB::table('following')->where('follower_id', $user->id)->get();
       $data = json_decode($data, true);
 
         $follower = [];
         foreach ($data as $key => $value) {
 
-          $follow = DB::table('users')->where('id', $value['user_id'])->get();
+          $follow = DB::table('users')->where('id', $value['my_id'])->get();
+        //  dd($value);
 
            foreach($follow as $key => $follow){
 
@@ -293,7 +289,6 @@ $fuser = [];
         }
         if(!empty($data)){
           unset($data);
-        //  dd($follower);
         return $follower;
     //  return $data;
 

@@ -8,8 +8,9 @@ use Symfony\Component\Finder\Finder;
 use KzykHys\FrontMatter\Document as Doc;
 use Auth;
 use DB;
-use Lucid\ext_rss;
+use Carbon\Carbon;
 use Lucid\extfeeds;
+use Lucid\Thought;
 use Storage;
 /**
  *	The Document class holds all properties and methods of a single page document.
@@ -21,22 +22,23 @@ class Document
     //define an instance of the symfony clss
     //define an instance of the frontMatter class
 
-    protected $file;
+    protected $user;
 
-    public function __construct($file)
+    public function __construct($user)
     {
         //FileSystem::makeDir($file);
-        $this->file   = $file;
+        $this->user   = $user;
     }
 
     public function file()
     {
-        return $this->file;
+        return $this->user;
     }
 
     //for creating markdown files
     //kjarts code here
-    public function create($title, $content, $tag="", $image, $extra, $postType="")
+    /*
+    public function createPost($title, $content, $tag="", $image, $extra, $postType="")
     {
 
         date_default_timezone_set("Africa/Lagos");
@@ -59,13 +61,13 @@ class Document
         }
 
         if (!empty($image)) {
-            $url = $this->file."/images/";
+            $url = $this->user."/images/";
             if(is_array($image)) {
                 foreach ($image as $key => $value) {
 
                     $decoded = base64_decode($image[$key]);
 
-                    $img_path = 'public/'.$this->file."/images/".$key;
+                    $img_path = 'public/'.$this->user."/images/".$key;
                     Storage::disk('local')->put( $img_path, $decoded);
                     $yamlfile['image'] = $url.$key;
                 }
@@ -83,9 +85,9 @@ class Document
         }
 
         if (!$extra) {
-            $yamlfile['post_dir'] =$this->file."/contents/{$unix}";
+            $yamlfile['post_dir'] =$this->user."/contents/{$unix}";
         } else {
-            $yamlfile['post_dir'] = $this->file."/drafts/{$unix}";
+            $yamlfile['post_dir'] = $this->user."/drafts/{$unix}";
 
         }
 
@@ -98,7 +100,7 @@ class Document
         $yamlfile['timestamp'] = $time;
         $yamlfile->setContent($content);
         $yaml = FrontMatter::dump($yamlfile);
-        $file = $this->file;
+        $file = $this->user;
         $dir = '';
         if($postType == "full-blog"){
             $dir = $file .'/content/posts/'. $unix . ".md";
@@ -106,7 +108,7 @@ class Document
             $dir = $file .'/content/micro-blog-posts/'. $unix . ".md";
         }
 
-        
+
 
 
         //return $dir; die();
@@ -128,8 +130,109 @@ class Document
 
         return $result;
     }
+    */
+    public function createPost($title,$content, $tags, $image,$username){
+
+        if (!empty($image)) {
+          $url = Auth::user()->id."/images/";
+          if(is_array($image)) {
+              foreach ($image as $key => $value) {
+
+                  $decoded = base64_decode($image[$key]);
+
+                  $img_path = 'public/'.Auth::user()->id."/images/".$key;
+                $image = Storage::disk('local')->put( $img_path, $decoded);
+
+              }
+          }
+      }else {
+        $image = null;
+      }
+
+      $slug = str_replace(' ', '-', $title);
+
+      $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+      $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+      $insertPosts = DB::table('posts')->insert([
+        'user_id'=>Auth::user()->id,
+        'title'=>$title,
+        'content'=>$content,
+        'tags'=>$tags,
+        'image'=> $image,
+        'slug'=>strtolower($slug)
+      ]);
+
+      if ($insertPosts) {
+        $result = array("error" => false, "action"=>"publish", "message" => "Post published successfully");
+        return true;
+    } else {
+        $result = array("error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again");
+        return false;
+    }
+
+    }
+
+    public function saveUpdatedPost($title,$content, $tags, $image,$username,$post_id) {
+
+        if (!empty($image)) {
+            $url = Auth::user()->id."/images/";
+            if(is_array($image)) {
+                foreach ($image as $key => $value) {
+  
+                    $decoded = base64_decode($image[$key]);
+  
+                    $img_path = 'public/'.Auth::user()->id."/images/".$key;
+                  $image = Storage::disk('local')->put( $img_path, $decoded);
+  
+                }
+            }
+        }else {
+          $image = null;
+        }
+  
+        $slug = str_replace(' ', '-', $title);
+  
+        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+        $updatePosts = DB::table('posts')->where('id',$post_id)->update([
+          'user_id'=>Auth::user()->id,
+          'title'=>$title,
+          'content'=>$content,
+          'tags'=>$tags,
+          'image'=> $image,
+          'slug'=>strtolower($slug)
+        ]);
+  
+        if ($updatePosts) {
+          
+          return true;
+      } else {
+         
+          return false;
+      }
+
+    }
+
+    public function createThough($content){
+
+
+      $insertPosts = DB::table('thoughts')->insert([
+        'user_id'=>Auth::user()->id,
+        'content'=>$content
+      ]);
+
+      if ($insertPosts) {
+        $result = array("error" => false, "action"=>"publish", "message" => "Post published successfully");
+        return true;
+    } else {
+        $result = array("error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again");
+        return false;
+    }
+
+    }
+
     //get post
-    public function get($postTypeSubDir)
+    public function postFixer($postTypeSubDir)
     {
         $finder = new Finder();
         // $finder->sortByModifiedTime();
@@ -137,9 +240,9 @@ class Document
 
         // find all files in the current directory
 
-        if(file_exists(storage_path('app/'.$this->file.'/content/'.$postTypeSubDir.'/'))){
+        if(file_exists(storage_path('app/'.$this->user.'/content/'.$postTypeSubDir.'/'))){
 
-            $finder->files()->in(storage_path('app/'.$this->file.'/content/'.$postTypeSubDir.'/'));
+            $finder->files()->in(storage_path('app/'.$this->user.'/content/'.$postTypeSubDir.'/'));
 
         $posts = [];
         if ($finder->hasResults()) {
@@ -149,7 +252,7 @@ class Document
                 $document = $parser->parse($document);
                 $yaml = $document->getYAML();
                 $body = $document->getContent();
-                //$document = FileSystem::read($this->file);
+                //$document = FileSystem::read($this->user);
                 $parsedown  = new Parsedown();
                 $tags = isset($yaml['tags']) ? $yaml['tags'] : '';
                 $title = isset($yaml['title']) ? $parsedown->text($yaml['title']) : '';
@@ -191,7 +294,28 @@ class Document
                 array_push($posts, $content);
             }
             $this->array_sort_by_column($posts,'created_at');
-            return $posts;
+
+            foreach ($posts as $key => $value) {
+              $title = strip_tags($value['title']);
+              $slug = str_replace(' ', '-', $title);
+              $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+              $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+
+              $insertPosts = DB::table('posts')->insert([
+                'user_id'=>Auth::user()->id,
+                'title'=>  $title,
+                'content'=> $value['body'],
+                'tags'=>$value['tags'],
+                'image'=> $value['image'],
+                'slug'=>strtolower($slug)
+              ]);
+
+
+            };
+          Storage::deleteDirectory($this->user.'/content/'.$postTypeSubDir.'/');
+          //  storage_path('app/'.$this->user.'/content/'.$postTypeSubDir.'/')
+      //      dd($insertPosts);
+            return true;
         } else {
             return [];
         }
@@ -248,21 +372,18 @@ class Document
 public function Feeds()
 {
   $user = Auth::user();
-  $data= ext_rss::where('user_id', $user['id'])->get();
+  $data= DB::table('following')->where('my_id', $user['id'])->get();
   //$data=[];
   $urlArray = json_decode($data, true);
-  $urlArray2 = array(
-  //    array('title' => $user['name'], 'url' => $url, 'desc' => '', 'link' => '', 'image' => $user['image'], 'time' => ''),
-    //  array('title' => 'Stratechery by Ben Thompson',  'url' => 'http://stratechery.com/feed/' , 'desc' => 'On the business, strategy, and impact of technology.', 'link' => '', 'image' => "https://stratechery.com/wp-content/uploads/2018/03/cropped-android-chrome-512x512-1-32x32.png", 'time' => ' Fri, 12 Jul 2019 16:06:22 +0000')
-  );
-  $result = array_merge($urlArray, $urlArray2);
+
   $feed = [];
-foreach ($result as $url) {
-  $feeds = DB::table('extfeeds')->where('site', $url['title'])->get();
+foreach ($urlArray as $id) {
+  $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
+  $feeds = DB::table('extfeeds')->where('site', $user->name)->get();
+//  dd($feeds );
     $feeds = json_decode($feeds, true);
   array_push($feed, $feeds);
 }
-  //dd($feed);
   $ex =[];
   for ($i=0; $i < count($feed) ; $i++) {
     for ($j=0; $j <count($feed[$i]) ; $j++) {
@@ -272,6 +393,7 @@ foreach ($result as $url) {
       //dd($ex);
     }
   }
+  //dd($ex);
   usort($ex, $this->build_sorter('id'));
 
     //arsort($ex);
@@ -329,15 +451,14 @@ public function checker()
 
     public function fetchAllRss()
     {
-      if (file_exists(storage_path('app/'.$this->file."/rss/rss.xml"))) {
-                  $xml = file_get_contents(storage_path('app/'.$this->file."/rss/rss.xml"));
-                  $url = storage_path('app/'.$this->file."/rss/rss.xml");
+    /*  if (file_exists(storage_path('app/'.$this->user."/rss/rss.xml"))) {
+                  $xml = file_get_contents(storage_path('app/'.$this->user."/rss/rss.xml"));
+                  $url = storage_path('app/'.$this->user."/rss/rss.xml");
           } else {
           $xml = file_get_contents(base_path("storage/rss/rss.xml"));
           $url = base_path("storage/rss/rss.xml");
           }
-
-        $url = storage_path('app/'.$this->file."/rss/rss.xml");
+        $url = storage_path('app/'.$this->user."/rss/rss.xml");
         $feed = [];
         if (strlen($xml != "")) {
             $rss = new \DOMDocument();
@@ -396,39 +517,61 @@ public function checker()
 
             }
 
-                  krsort($feed);
-              //  dd($feed);
+            */
+            $feed = $this->getPosts();
+            $this->postFixer("posts");
+
                 //  print_r($feed);
+                $user = DB::table('users')->where('username', $this->user)->first();
                   foreach ($feed as $key => $value) {
 
-                  if (extfeeds::where('title', $value["title"])->orWhere('link',$value['link'])->doesntExist()== 1) {
-                    $feedId[]  = DB::table('extfeeds')->insert([
-                        'user_id'          =>$value['user_id'],
-                        'site'             => $value['site'],
-                        'site_image'       => $value['site_image'],
+                  //  dd($this->user."/post/" . strtolower(strip_tags($value['slug' ])));
+                  if (extfeeds::Where('link', $this->user."/post/" . strtolower(strip_tags($value['slug' ])))->Where('site', "=", $user->name)->doesntExist()== 1) {
+                    $feedId  = DB::table('extfeeds')->insert([
+                        'user_id'          =>$user->id,
+                        'site'             => $user->name,
+                        'site_image'       => $user->image,
                         'title'            => strip_tags($value['title']),
-                        'des'             => strip_tags($value['des']),
-                        'link'             => strip_tags($value['link' ]),
-                        'date'    => date("F j, Y, g:i a", strtotime($value['date'])),
+                        'des'             =>  strip_tags($value['body']),
+                        'link'             => $this->user."/post/" . strtolower(strip_tags($value['slug' ])),
+                        'date'    => $value['date'],
                         'image'   => $value['image'],
                       ]);
                   }
                   };
 
+                //  dd($feed);
 
-                return true;
+                return $feed;
 
-              } else {
-                  return false;
-              }
+              //}
           }
+          public function Thoughts()
+          {
 
+                  $feed = $this->getThoughts($this->user);
+                //  $this->postFixer("micro-blog-posts");
+                        krsort($feed);
+
+
+                    //    dd($feed);
+                      return $feed;
+                    //}
+                }
+public function cleaner()
+{
+  $user= DB::table('users')->where('username', $this->user)->first();
+  if (extfeeds::Where('user_id', '=', $user->id)->Where('site', "!=", $user->name)->exists()== 1) {
+  return extfeeds::Where('user_id', '=', $user->id)->Where('site', "!=", $user->name)->delete();
+  }
+  $this->fetchAllRss();
+}
     //RSS designed By DMAtrix;
     public function fetchRss()
     {
-      if (file_exists(storage_path('app/'.$this->file."/rss/rss.xml"))) {
-                  $xml = file_get_contents(storage_path('app/'.$this->file."/rss/rss.xml"));
-                  $url = storage_path('app/'.$this->file."/rss/rss.xml");
+      if (file_exists(storage_path('app/'.$this->user."/rss/rss.xml"))) {
+                  $xml = file_get_contents(storage_path('app/'.$this->user."/rss/rss.xml"));
+                  $url = storage_path('app/'.$this->user."/rss/rss.xml");
           } else {
           $xml = file_get_contents(base_path("storage/rss/rss.xml"));
           $url = base_path("storage/rss/rss.xml");
@@ -471,25 +614,27 @@ public function checker()
     public function createRSS()
     {
       //  $user = file_get_contents("./src/config/auth.json");
-        //$user = json_decode($user, true);
-$user = Auth::user();
+//$user = Auth::user();
+$user= DB::table('users')->where('username', $this->user)->first();
+//$user = json_decode($user, true);
+//dd($user->name);
           date_default_timezone_set("Africa/Lagos");
         $Feed = new RSS2;
         // Setting some basic channel elements. These three elements are mandatory.
-        $Feed->setTitle($user['name']);
-        $Feed->setLink(storage_path('app/'.$this->file.'./rss/rss.xml'));
+        $Feed->setTitle($user->name);
+        $Feed->setLink(storage_path('app/'.$this->user.'./rss/rss.xml'));
         $Feed->setDescription("");
 
         // Image title and link must match with the 'title' and 'link' channel elements for RSS 2.0,
         // which were set above.
-        $Feed->setImage($user['name'], '', $user['image']);
+        $Feed->setImage($user->name, '', $user->image);
 
         $Feed->setChannelElement('language', 'en-US');
         $Feed->setDate(date(DATE_RSS, time()));
         $Feed->setChannelElement('pubDate', date(\DATE_RSS, strtotime('2013-04-06')));
 
 
-        $Feed->setSelfLink(storage_path('app/'.$this->file."/rss/rss.xml"));
+        $Feed->setSelfLink(storage_path('app/'.$this->user."/rss/rss.xml"));
         $Feed->setAtomLink('http://pubsubhubbub.appspot.com', 'hub');
 
         $Feed->addNamespace('creativeCommons', 'http://backend.userland.com/creativeCommonsRssModule');
@@ -498,7 +643,7 @@ $user = Auth::user();
         $Feed->addGenerator();
 
         $finder = new Finder();
-        $finder->files()->in(storage_path().'/app/'.$this->file.'/content');
+        $finder->files()->in(storage_path().'/app/'.$this->user.'/content');
 
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -521,13 +666,13 @@ $user = Auth::user();
                 $url = $parsedown->text($yaml['post_dir']);
                 $newItem = $Feed->createNewItem();
                 $newItem->setTitle(strip_tags($title));
-                $newItem->setLink($this->file."/post/" . strtolower($slug));
+                $newItem->setLink($this->user."/post/" . strtolower($slug));
                 $newItem->setDescription(substr(strip_tags($bd), 0, 100));
                 $newItem->setDate(date(\DateTime::RSS, strtotime($yaml['timestamp'])));
 
-                $newItem->setAuthor($user['name'], $user['email']);
+                $newItem->setAuthor($user->name, $user->email);
                 $newItem->setId($url, true);
-                $newItem->addElement('source', $user['name'] . '\'s page');
+                $newItem->addElement('source', $user->name . '\'s page');
 
                 $newItem->addElement('image', $image);
 
@@ -535,7 +680,7 @@ $user = Auth::user();
                 $Feed->addItem($newItem);
             }
             $myFeed = $Feed->generateFeed();
-            $handle = $this->file."/rss/rss.xml";
+            $handle = $this->user."/rss/rss.xml";
           //  dd($handle);
             $doc = Storage::put($handle, $myFeed);
             //        fwrite($handle, $myFeed);
@@ -556,7 +701,7 @@ $user = Auth::user();
         $Feed = new RSS2;
         // Setting some basic channel elements. These three elements are mandatory.
         $Feed->setTitle($user['name']);
-        $Feed->setLink(storage_path('app/'.$this->file.'./rss/rss.xml'));
+        $Feed->setLink(storage_path('app/'.$this->user.'./rss/rss.xml'));
         $Feed->setDescription("");
 
         // Image title and link must match with the 'title' and 'link' channel elements for RSS 2.0,
@@ -568,7 +713,7 @@ $user = Auth::user();
         $Feed->setChannelElement('pubDate', date(\DATE_RSS, strtotime('2013-04-06')));
 
 
-        $Feed->setSelfLink(storage_path('app/'.$this->file."/rss/rss.xml"));
+        $Feed->setSelfLink(storage_path('app/'.$this->user."/rss/rss.xml"));
         $Feed->setAtomLink('http://pubsubhubbub.appspot.com', 'hub');
 
         $Feed->addNamespace('creativeCommons', 'http://backend.userland.com/creativeCommonsRssModule');
@@ -579,7 +724,7 @@ $user = Auth::user();
 
             $myFeed = $Feed->generateFeed();
 
-            $handle = $this->file."/rss/rss.xml";
+            $handle = $this->user."/rss/rss.xml";
           //  dd($handle);
             $doc = Storage::put($handle, $myFeed);
             //        fwrite($handle, $myFeed);
@@ -619,7 +764,7 @@ $user = Auth::user();
         $Feed->addGenerator();
 
         $finder = new Finder();
-        $finder->files()->in($this->file);
+        $finder->files()->in($this->user);
 
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -658,15 +803,17 @@ $user = Auth::user();
     }
     public function subscriber()
     {
-      $user =   DB::table('users')->where('username', $this->file)->first();
-        $data= ext_rss::where('title', $user->name)->get();
+
+      $user =   DB::table('users')->where('username', $this->user)->first();
+
+        $data= DB::table('following')->where('follower_id', $user->id)->get();
         $data = json_decode($data, true);
         //  dd($data);
 
           $follower = [];
           foreach ($data as $key => $value) {
 
-            $follow = DB::table('users')->where('id', $value['user_id'])->get();
+            $follow = DB::table('users')->where('id', $value['my_id'])->get();
 
              foreach($follow as $key => $follow){
 
@@ -684,14 +831,14 @@ $user = Auth::user();
     public function subscription()
     {
       //$user = Auth::user();
-    $user =   DB::table('users')->where('username', $this->file)->first();
-      $data= ext_rss::where('user_id', $user->id)->get();
+    $user =   DB::table('users')->where('username', $this->user)->first();
+      $data= DB::table('following')->where('my_id', $user->id)->get();
       $data = json_decode($data, true);
 
-      //dd($data);
+    //  dd($data);
         $following = [];
         foreach ($data as $key => $value) {
-  $follower= DB::table('users')->where('name', $value['title'])->get();
+  $follower= DB::table('users')->where('id', $value['follower_id'])->get();
           foreach($follower as $key => $follower){
           $content['name'] = $follower->name;
           $content['username'] = $follower->username;
@@ -709,7 +856,7 @@ $user = Auth::user();
     {
         $finder = new Finder();
         // find all files in the current directory
-        $finder->files()->in($this->file);
+        $finder->files()->in($this->user);
         $posts = [];
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -718,7 +865,7 @@ $user = Auth::user();
                 $document = $parser->parse($document);
                 $yaml = $document->getYAML();
                 $body = $document->getContent();
-                //$document = FileSystem::read($this->file);
+                //$document = FileSystem::read($this->user);
                 $parsedown  = new Parsedown();
                 $slug = $parsedown->text($yaml['slug']);
                 $slug = preg_replace("/<[^>]+>/", '', $slug);
@@ -744,7 +891,7 @@ $user = Auth::user();
     {
         $finder = new Finder();
         // find all files in the current directory
-        $finder->files()->in($this->file);
+        $finder->files()->in($this->user);
         $posts = [];
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -753,7 +900,7 @@ $user = Auth::user();
                 $document = $parser->parse($document);
                 $yaml = $document->getYAML();
                 $body = $document->getContent();
-                //$document = FileSystem::read($this->file);
+                //$document = FileSystem::read($this->user);
                 $parsedown  = new Parsedown();
                 // skip this document if it has no tags
                 if (!isset($yaml['tags'])) {
@@ -801,7 +948,7 @@ $user = Auth::user();
     {
         $finder = new Finder();
         // find all files in the current directory
-        $finder->files()->in($this->file);
+        $finder->files()->in($this->user);
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
                 $document = $file->getContents();
@@ -823,28 +970,110 @@ $user = Auth::user();
             return $delete;
         }
     }
+
     //deleteapOST by ProblemSolved;
     public function deletePost($post)
     {
         $finder = new Finder();
         // find post in the current directory
-        $finder->files()->in($this->file)->name($post . '.md');
+        $finder->files()->in($this->user)->name($post . '.md');
         if (!$finder->hasResults()) {
             return $this->redirect('/404');
         } else {
             ///coming back for some modifications
-            unlink($this->file.$post.'.md');
+            unlink($this->user.$post.'.md');
             $this->createRSS();
         }
     }
 
     //get single post
 
-    public function getPost($post)
+    public function getPost($username,$postSlug){
+    //  $user = $this->user($username);
+      $user =   DB::table('users')->where('username', $username)->first();
+
+      $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
+      if(!empty($post)) {
+
+        $parsedown  = new Parsedown();
+        $createdAt = Carbon::parse($post->created_at);
+        $content['tags'] = $post->tags;
+        $content['title'] =$post->title;
+        $content['body'] = $parsedown->text($post->content);
+        $content['date'] = $createdAt->format('M jS, Y h:i A');
+        $content['slug'] = $this->clean($post->slug);
+        $content['id'] = $post->id;
+        return $content;
+
+      }
+
+    }
+
+    //Get all post
+    public function getThoughts(){
+    //  $user =  $this->user($username);
+      $user =   DB::table('users')->where('username', $this->user)->first();
+
+      $thoughts = DB::table('thoughts')->where('user_id',$user->id)->get();
+//dd($thoughts);
+      if(!empty($thoughts)){
+
+        $allPost = [];
+      foreach($thoughts as $thought){
+
+        $content['body']  = $thought->content;
+        $content['date']  =  $thought->created_at;
+        $content['id'] = $thought->id;
+        array_push($allPost,$content);
+      }
+    //  $this->fetchAllRss();
+    //    dd($allPost);
+      return $allPost;
+
+      }
+
+    }
+
+        public function getPosts(){
+        //  $user =  $this->user($username);
+          $user =   DB::table('users')->where('username', $this->user)->first();
+
+          $posts = DB::table('posts')->where('user_id',$user->id)->orderBy('id','DESC')->get();
+          if(!empty($posts)){
+
+            $allPost = [];
+          foreach($posts as $post){
+            $parsedown  = new Parsedown();
+            $postContent = $parsedown->text($post->content);
+            preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+            $first_img = "";
+            if (isset($matches[1])) {
+                // there are images
+                $first_img = $matches[1];
+                // strip all images from the text
+                $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+            }
+            $createdAt = Carbon::parse($post->created_at);
+            $content['title'] = $post->title;
+            $content['body']  = $this->trim_words($postContent, 200);
+            $content['tags']  = $post->tags;
+            $content['slug']  = $this->clean($post->slug);
+            $content['image'] = $first_img;
+            $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+            $content['id'] = $post->id;
+            array_push($allPost,$content);
+          }
+          return $allPost;
+
+          }
+
+        }
+
+ /*  public function getPost($post)
     {
         $finder = new Finder();
         // find post in the current directory
-        $finder->files()->in(storage_path().'/app/'.$this->file.'/content')->name($post . '.md');
+        $finder->files()->in(storage_path().'/app/'.$this->user.'/content')->name($post . '.md');
         $content = [];
         if (!$finder->hasResults()) {
             return false;
@@ -890,7 +1119,7 @@ $user = Auth::user();
             }
             return $content;
         }
-    }
+    }*/
 
     public function update_Post($title, $content, $tags, $image, $extra,$post_id)
     {
@@ -903,7 +1132,7 @@ $user = Auth::user();
 
         $yaml = $markdown->getYAML();
         $html = $markdown->getContent();
-        //$doc = Storage::put($this->file, $yaml . "\n" . $html);
+        //$doc = Storage::put($this->user, $yaml . "\n" . $html);
 
         $yamlfile = new Doc();
         if($title != ""){
@@ -940,7 +1169,7 @@ $user = Auth::user();
         $yamlfile['timestamp'] = $time;
         $yamlfile->setContent($content);
         $yaml = FrontMatter::dump($yamlfile);
-        $dir = $this->file.$post_id.'.md';
+        $dir = $this->user.$post_id.'.md';
         $explodeSChars = explode('&#10;',$yaml);
         $fopen = fopen($dir,'w');
         foreach($explodeSChars as $yamlTextContent )
@@ -979,7 +1208,7 @@ $user = Auth::user();
 
         $finder = new Finder();
         // find post in the current directory
-        $finder->files()->in($this->file)->notName($skip_post . '.md')->contains($tags);
+        $finder->files()->in($this->user)->notName($skip_post . '.md')->contains($tags);
         $posts = [];
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -988,7 +1217,7 @@ $user = Auth::user();
                 $document = $parser->parse($document);
                 $yaml = $document->getYAML();
                 $body = $document->getContent();
-                //$document = FileSystem::read($this->file);
+                //$document = FileSystem::read($this->user);
                 $parsedown  = new Parsedown();
                 if (!isset($yaml['tags'])) {
                     continue;
@@ -1115,7 +1344,7 @@ $user = Auth::user();
 
         $yaml = $markdown->getYAML();
         $html = $markdown->getContent();
-        //$doc = Storage::put($this->file, $yaml . "\n" . $html);
+        //$doc = Storage::put($this->user, $yaml . "\n" . $html);
 
         $yamlfile = new Doc();
         $yamlfile['title'] = $title;
@@ -1126,7 +1355,7 @@ $user = Auth::user();
         $yamlfile['timestamp'] = $time;
         $yamlfile->setContent($content);
         $yaml = FrontMatter::dump($yamlfile);
-        $file = $this->file;
+        $file = $this->user;
         $dir = $file . $unix . ".md";
         //return $dir; die();
         $doc = Storage::put($dir, $yaml);
@@ -1142,7 +1371,7 @@ $user = Auth::user();
         $finder = new Finder();
 
         // find all files in the current directory
-        $finder->files()->in($this->file);
+        $finder->files()->in($this->user);
         $videos = [];
         if ($finder->hasResults()) {
             foreach ($finder as $file) {
@@ -1151,7 +1380,7 @@ $user = Auth::user();
                 $document = $parser->parse($document);
                 $yaml = $document->getYAML();
                 $body = $document->getContent();
-                //$document = FileSystem::read($this->file);
+                //$document = FileSystem::read($this->user);
                 $parsedown  = new Parsedown();
                 $title = $parsedown->text($yaml['title']);
                 $bd = $parsedown->text($body);

@@ -8,19 +8,21 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @auth
   <meta name="username" content="{{ Auth::user()->username }}">
+  <meta name="user_id" content="{{ Auth::user()->id }}">
   @endauth
   <!-- <title>{{ config('app.name', 'Lucid') }}</title> -->
   <title>@yield('title')</title>
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/luci-logo.png') }}">
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet" />
-  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
+
   <style>
     .preloader-wrapper {
       display: none;
@@ -138,7 +140,7 @@
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
+            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
           </div>
         </div>
       </div>
@@ -200,11 +202,28 @@
       <div class="col-lg-8 pb-0">
 
         <!-- Beginning of Navbar -->
-        <div class="container-fluid p-0 m-0 mb-5 d-flex justify-content-between">
+        <div class="container-fluid p-0 m-0 mb-5 d-flex justify-content-between justify-content-lg-end">
           <a class="d-lg-none" id="sidebarToggle"><i class="icon ion-md-list" style="font-size: 1.8em"></i></a>
+          @guest
+          @else
+        <div class="dropdown">
+            <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications cursor-pointer" style="font-size: 1.8em;"></i>
+              <span class="badge badge-danger count"></span>
+              <span class="sr-only">unread notifications</span></a>
+            <div class="dropdown-menu dropdown-menu-right notification-menu" aria-labelledby="dropdownNotification">
+              <h6 class="font-weight-bold mx-2">Notifications</h6>
+              <div id="notif">
+
+                  <div class="spinner" style=" padding: 20px;  width: 2vw;
+    height: 2vw;"></div>
+                </div>
+              <a href="{{ route('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+            </div>
+          </div>
+            @endguest
           <div class="dropdown" id="lucid-dropdown">
-            <a class="nav-link dropdown-toggle pt-1" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @guest
@@ -232,6 +251,7 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
   <script>
     const anchor = window.location.hash;
     $(`a[href="${anchor}"]`).tab('show')
@@ -258,12 +278,12 @@
         // hide overlay
         $('.overlay').removeClass('active');
       });
-/*       $('[data-toggle="modal"]').on('click', function() {
-        // hide sidebar
-        $('#sidebar').addClass('d-none');
-        // hide overlay
-        $('.overlay').removeClass('active');
-      }); */
+      /*       $('[data-toggle="modal"]').on('click', function() {
+              // hide sidebar
+              $('#sidebar').addClass('d-none');
+              // hide overlay
+              $('.overlay').removeClass('active');
+            }); */
       $('#sidebarToggle').on('click', function() {
         // open sidebar
         $('#sidebar').addClass('active-sidebar');
@@ -272,8 +292,12 @@
         $('.collapse.in').toggleClass('in');
         $('a[aria-expanded=true]').attr('aria-expanded', 'false');
       });
+
+
     });
   </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-28315089-7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -284,7 +308,74 @@
     gtag('js', new Date());
     gtag('config', 'UA-28315089-7');
   </script>
+  @guest
+  @else
+<script>
+const s = jQuery.noConflict();
+ s(document).ready(function (){
+    const check = "{{ route('notif',['username'=>$user->username])  }}"
 
+function load_unseen_notification(view = '')
+{
+  s.ajaxSetup({
+    headers:{
+      'X-CSRF-TOKEN': s('meta[name="csrf-token"]').attr('content')
+    }
+  })
+s.ajax({
+  url:check,
+  method:"POST",
+  data:{view:view},
+  dataType:"json",
+  })
+.then (
+  function(data) {
+  //  console.log(data);
+
+   if(data.unseen_notification > 0)
+   {
+    s('.count').html(data.unseen_notification);
+   }
+
+
+ })
+.catch(function(err) {
+    //console.log('Fetch Error :-S', err);
+    });
+  }
+  const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
+
+  s(document).on('click', '#load', function(){
+  view = "";
+  s.ajax({
+    url:view_notif,
+    method:"Get",
+    data:{view:view},
+    dataType:"json",
+    })
+  .then (
+    function(data) {
+
+    //    console.log(data);
+    s('#notif').html(data.notification);
+  });
+});
+
+  setInterval(function(){
+load_unseen_notification();
+}, 2000);
+
+s(document).on('click', '#notif', function(){
+ s('.count').html('');
+ load_unseen_notification('yes');
+  });
+
+
+
+})
+
+</script>
+  @endguest
 </body>
 
 </html>
