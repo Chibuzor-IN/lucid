@@ -33,6 +33,7 @@ class pageController extends Controller
                 $post = new \Lucid\Core\Document($username);
 
                 $post = $post->Feeds();
+            //    dd($post);
             //$post =[];
                 $sub = new \Lucid\Core\Subscribe($username);
                 $fcount = $sub->myfollowercount();
@@ -181,7 +182,7 @@ class pageController extends Controller
 
             $user = $this->user($username);
             $app  = new \Lucid\Core\Document($username);
-            $posts=$app->getPosts();
+            $posts=$app->fetchAllRss();
 
             //dd($posts);
             // follower and following Count
@@ -533,7 +534,7 @@ class pageController extends Controller
   public function filterPost($method) {
 
     if($method == "Recent"){
-      
+
       $posts = DB::table('posts')
                 ->join('users','posts.user_id','=','users.id')
                 ->select('posts.*','users.image','users.username')
@@ -563,7 +564,7 @@ class pageController extends Controller
         $content['id'] = $post->id;
         $content['username'] = $post->username;
         $content['user_img'] = $post->image;
-        
+
         array_push($allPost,$content);
       }
       return view('filtered-posts')->with(['posts'=>$allPost]);
@@ -571,7 +572,7 @@ class pageController extends Controller
       }
     }elseif($method =="Popular"){
 
-      
+
 
     }
   }

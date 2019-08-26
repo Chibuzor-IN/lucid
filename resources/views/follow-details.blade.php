@@ -306,7 +306,7 @@ $location= 'follow';
               <p class="small"><em>Are you sure you want to Unfollow {{$follow['name']}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
               <form method="POST" action="{{URL::to('/')}}/{{ $user->username}}/unfollow">
                 @csrf
-                <input type="hidden" name="rss" value="{{$follow['username']}}">
+                <input type="hidden" name="rss" value="{{$follow['name']}}">
                 <button type="submit" class="btn btn-primary">UnFollow</button>
               </form>
             </div>

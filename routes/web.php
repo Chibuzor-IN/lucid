@@ -33,9 +33,9 @@ Route::get('loader', function () {
 Route::get('subscribe', function () {
     return view('subscribe');
 });
-Route::get('fix','HomeController@fix');
-Route::get('oldfeed','HomeController@old');
-Route::get('newfeed','HomeController@new');
+//Route::get('fix','HomeController@fix');
+//Route::get('oldfeed','HomeController@old');
+//Route::get('newfeed','HomeController@new');
 
 
 

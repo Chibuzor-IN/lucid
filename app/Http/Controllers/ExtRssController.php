@@ -51,6 +51,7 @@ class ExtRssController extends Controller
   }
   public function unfollow(Request $request)
   {
+
     $user = Auth::user();
     $username = $user->username;
     $rss = $request->rss;

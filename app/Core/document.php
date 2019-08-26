@@ -178,20 +178,20 @@ class Document
             $url = Auth::user()->id."/images/";
             if(is_array($image)) {
                 foreach ($image as $key => $value) {
-  
+
                     $decoded = base64_decode($image[$key]);
-  
+
                     $img_path = 'public/'.Auth::user()->id."/images/".$key;
                   $image = Storage::disk('local')->put( $img_path, $decoded);
-  
+
                 }
             }
         }else {
           $image = null;
         }
-  
+
         $slug = str_replace(' ', '-', $title);
-  
+
         $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
         $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
@@ -202,12 +202,12 @@ class Document
           'image'=> $image,
           'slug'=>strtolower($slug)
         ]);
-  
+
         if ($updatePosts) {
-          
+
           return true;
       } else {
-         
+
           return false;
       }
 

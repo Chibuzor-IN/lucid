@@ -292,7 +292,8 @@ $location = 'timeline';
                   @else
                   <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
                   @endif -->
-              <img src="{{$user->image}}" class="timeline-img" alt={{ $user->name}} />
+
+              <img src="{{$feeds['site_image']}}" class="timeline-img" alt={{ $user->name}} />
               <div class="post-content-body mb-0">
                 <span class="text-muted">Technology</span>
                 <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
