@@ -293,9 +293,9 @@ $location = 'timeline';
                   <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
                   @endif -->
 
-              <img src="{{$feeds['site_image']}}" class="timeline-img" alt={{ $user->name}} />
+              <img src="{{$feeds['site_image']}}" class="timeline-img" alt="{{$feeds['site']}}" />
               <div class="post-content-body mb-0">
-                <span class="text-muted">Technology</span>
+                <span class="text-muted">{{$feeds['tags']}}</span>
                 <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
                   <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
                 </a>
@@ -305,7 +305,7 @@ $location = 'timeline';
                 <div class="row">
                   <span class="col-6 col-sm-6 col-md-8">
                     <small>
-                    <a href="{{$feeds['site']}}" class="text-muted">{{$feeds['site']}}</a>
+                    <a href="{{URL::to('/')}}/{{$feeds['username']}}" class="text-muted">{{$feeds['site']}}</a>
                     <span class="font-weight-bold">.</span>
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>

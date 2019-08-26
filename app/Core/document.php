@@ -191,7 +191,15 @@ class Document
         }
 
         $slug = str_replace(' ', '-', $title);
-
+        $oldpost = DB::table('posts')->where('id',$post_id)->first('title');
+      //  dd($oldpost->title);
+        $updateFeeds = DB::table('extfeeds')->where('title',$oldpost->title)
+        ->update([
+          'title'=>$title,
+          'des'=>$content,
+          'tags'=>$tags,
+          'image'=> $image,
+        ]);
         $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
         $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
@@ -203,6 +211,7 @@ class Document
           'slug'=>strtolower($slug)
         ]);
 
+        //dd($updateFeeds);
         if ($updatePosts) {
 
           return true;
@@ -379,7 +388,11 @@ public function Feeds()
   $feed = [];
 foreach ($urlArray as $id) {
   $user= DB::table('users')->where('id', $id['follower_id'])->first('name');
-  $feeds = DB::table('extfeeds')->where('site', $user->name)->get();
+
+  $feeds = DB::table('extfeeds')
+  ->join('users','extfeeds.site','=','users.name')
+  ->select('extfeeds.*','users.username','users.email','users.image')
+  ->where('site', $user->name)->get();
 //  dd($feeds );
     $feeds = json_decode($feeds, true);
   array_push($feed, $feeds);

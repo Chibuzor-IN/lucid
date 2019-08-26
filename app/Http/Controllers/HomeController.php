@@ -389,13 +389,14 @@ return true;
          }
        }
        DB::table('notifications')->where('post_id',$post->id)->delete();
+        DB::table('extfeeds')->where('title',$post->title)->delete();
       $deletePost = DB::table('posts')->where('id',$post->id)->delete();
       if($deletePost) {
         return response()->json(['success'=>"Post Successfully Deleted"],200);
       }else{
         return response()->json(['error'=>"Something not right"],500);
       }
-      
+
     }
 
 
