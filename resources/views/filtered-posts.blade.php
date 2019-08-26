@@ -1,6 +1,6 @@
 @forelse($posts as $post)
 <div class="post-content">
-    <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+    <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
     <div class="post-content-body">
     <h5 class="font-weight-bold">{{ $post['title']  }}</h5>
     <p class="">

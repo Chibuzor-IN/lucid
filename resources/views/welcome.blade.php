@@ -38,7 +38,7 @@ border:1px solid #9179ef;
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-10">
-				<img src="{{ secure_asset('img/lucid-preview.jpg') }}" class="img-fluid lucid-laptop" alt="Lucid" />
+				<img src="{{ asset('img/lucid-preview.jpg') }}" class="img-fluid lucid-laptop" alt="Lucid" />
 			</div>
 		</div>
 	</div>
@@ -55,7 +55,7 @@ border:1px solid #9179ef;
 		<div class="row text-white">
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/14019879701543984325.png') }}" alt="Tell Your Story on Lucid" class="img-fluid pb-4" />
+					<img src="{{ asset('img/14019879701543984325.png') }}" alt="Tell Your Story on Lucid" class="img-fluid pb-4" />
 					<h5>Tell Your Story on Lucid</h5>
 					<p>
 						Own a platform on Lucid. Your thoughts and ideas are very
@@ -65,7 +65,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/17101174831552994197.png ') }}" alt="You Are in Safe Hands" class="img-fluid pb-4" />
+					<img src="{{ asset('img/17101174831552994197.png ') }}" alt="You Are in Safe Hands" class="img-fluid pb-4" />
 					<h5>You Are in Safe Hands</h5>
 					<p>
 						Whatever content you want on your website are made to last
@@ -76,7 +76,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/16143869721535958154.png') }}" alt="Your Right to Privacy" class="img-fluid pb-4" />
+					<img src="{{ asset('img/16143869721535958154.png') }}" alt="Your Right to Privacy" class="img-fluid pb-4" />
 					<h5>Your Right to Privacy</h5>
 					<p>
 						Our goal is to help you believe that “privacy” is one of life’s
@@ -87,7 +87,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/4804552381535029667.png') }}" alt="In One Simple Set up" class="img-fluid pb-4" />
+					<img src="{{ asset('img/4804552381535029667.png') }}" alt="In One Simple Set up" class="img-fluid pb-4" />
 					<h5>In One Simple Set up</h5>
 					<p>
 						Create your domain in one setup with no intrusions, pop ups
@@ -112,7 +112,7 @@ border:1px solid #9179ef;
 					<div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
 						<div class="carousel-inner">
 							<div class="carousel-item active text-center">
-								<!-- <img src="{{ secure_asset('img/geek.jpg ') }}" alt="" srcset="" /> -->
+								<!-- <img src="{{ asset('img/geek.jpg ') }}" alt="" srcset="" /> -->
 								<i class="icon ion-md-contact" style="font-size: 5em"></i>
 								<h5 class="testimonal-text">
 									“Lucid platform is quite amazing, it has simple UI and it's very functional. I'm excited about what the future holds for Nigerian creatives.”
@@ -120,7 +120,7 @@ border:1px solid #9179ef;
 								<p class="username">Joseph Burutu</p>
 							</div>
 							<div class="carousel-item text-center">
-								<!-- <img src="{{ secure_asset('img/images.jpg') }}" alt="" srcset="" /> -->
+								<!-- <img src="{{ asset('img/images.jpg') }}" alt="" srcset="" /> -->
 								<i class="icon ion-md-contact" style="font-size: 5em"></i>
 								<h5 class="testimonal-text">
 									“I think what I like is the easy entry point using Google. Also the interface is simple and easy to navigate and for me that's is a thumps up.”
@@ -128,7 +128,7 @@ border:1px solid #9179ef;
 								<p class="username">Obideje, Chidera Godswill</p>
 							</div>
 							<div class="carousel-item text-center">
-								<!-- <img src="{{ secure_asset('img/geek1.jpg') }}" alt="" srcset="" /> -->
+								<!-- <img src="{{ asset('img/geek1.jpg') }}" alt="" srcset="" /> -->
 								<i class="icon ion-md-contact" style="font-size: 5em"></i>
 								<h5 class="testimonal-text">
 									“Firstly, sign up was super easy as i synced my google account with the lucid platform...I totally love the UI and overall design.”
