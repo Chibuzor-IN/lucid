@@ -12,13 +12,13 @@
   @endauth
   <!-- <title>{{ config('app.name', 'Lucid') }}</title> -->
   <title>@yield('title')</title>
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/luci-logo.png') }}">
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet" />
-  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
@@ -140,7 +140,7 @@
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
+            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
           </div>
         </div>
       </div>
@@ -223,7 +223,7 @@
             @endguest
           <div class="dropdown" id="lucid-dropdown">
             <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+              <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
               @guest

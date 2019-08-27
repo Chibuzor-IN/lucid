@@ -278,7 +278,7 @@ $location = 'timeline';
             @foreach ($posts as $feeds)
             <div class="post-content">
               <!--           @if (empty($feeds['site_image']))
-                  <img src="{{ asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
+                  <img src="{{ secure_asset('img/logo.jpg') }}" class="img-fluid img-thumb" alt="user" />
                   @else
                   <img src="{{ $feeds['site_image']}}" class="img-fluid img-thumb" alt="user" />
                   @endif -->
@@ -317,56 +317,56 @@ $location = 'timeline';
       <!-- <div class="tab-pane show" role="tabpanel" id="category">
         <div class="row p-3 m-0">
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/politics.png') }}" class="w-100" alt="politics" />
+            <img src="{{ secure_asset('img/politics.png') }}" class="w-100" alt="politics" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Politics</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/sports.png') }}" class="w-100" alt="sports" />
+            <img src="{{ secure_asset('img/sports.png') }}" class="w-100" alt="sports" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Sports</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/health.png') }}" class="w-100" alt="health" />
+            <img src="{{ secure_asset('img/health.png') }}" class="w-100" alt="health" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Health</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/technology.png') }}" class="w-100" alt="technology" />
+            <img src="{{ secure_asset('img/technology.png') }}" class="w-100" alt="technology" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Technology</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/music.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/music.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Music</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/lifestyle.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/lifestyle.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Lifestyle</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/movies.png') }}" class="w-100" alt="movies" />
+            <img src="{{ secure_asset('img/movies.png') }}" class="w-100" alt="movies" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Movies</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/fitness.png') }}" class="w-100" alt="fitness" />
+            <img src="{{ secure_asset('img/fitness.png') }}" class="w-100" alt="fitness" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Fitness</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
@@ -410,7 +410,7 @@ $location = 'timeline';
             </option>
           </select>
           <div class="post-content mt-5 ">
-              <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">Maybe You Don't Need Kubernetes</h5>
                 <p class="">
@@ -421,7 +421,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">What Is Rust Doing Behind the Curtains? </h5>
                 <p class="">
@@ -432,7 +432,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-3.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-3.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">The Unreasonable Effectiveness of Excel Macros</h5>
                 <p class="">
@@ -443,7 +443,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-1.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">Switching from a German to a US Keyboard Layout - Is It Worth It? </h5>
                 <p class="">
@@ -454,7 +454,7 @@ $location = 'timeline';
             </div>
 
             <div class="post-content">
-              <img src="{{ asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+              <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
               <div class="post-content-body">
                 <h5 class="font-weight-bold">fastcat - A Faster `cat` Implementation Using Splice</h5>
                 <p class="">

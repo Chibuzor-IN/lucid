@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="{{ asset('css/main-style.css') }}" />
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/luci-logo.png') }}">
+  <link rel="stylesheet" href="{{ secure_asset('css/main-style.css') }}" />
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
   <title>Are you lost?</title>
   <style>
     body{
@@ -35,7 +35,7 @@
 <body>
     <main class="container">
       <h2>Something's not right</h2>
-      <img src="{{ asset('img/404-space-ship.svg') }}" alt="space ship image">
+      <img src="{{ secure_asset('img/404-space-ship.svg') }}" alt="space ship image">
       <p>It seems the aliens have taken this page..</p>
       <a href="javascript: history.go(-1)">Click this button to return home</a>
     </main>

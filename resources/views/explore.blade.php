@@ -8,10 +8,10 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://unpkg.com/ionicons@4.5.9-1/dist/css/ionicons.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/luci-logo.png') }}">
-  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
-  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
+  <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
   <title>Explore</title>
 
   <style>
@@ -35,7 +35,7 @@
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle pt-0" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="{{ asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
           </a>
         </li>
       </ul>
@@ -64,56 +64,56 @@
       <div class="tab-pane show active" role="tabpanel" id="category">
         <div class="row p-3 m-0">
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/politics.png') }}" class="w-100" alt="politics" />
+            <img src="{{ secure_asset('img/politics.png') }}" class="w-100" alt="politics" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Politics</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/sports.png') }}" class="w-100" alt="sports" />
+            <img src="{{ secure_asset('img/sports.png') }}" class="w-100" alt="sports" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Sports</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/health.png') }}" class="w-100" alt="health" />
+            <img src="{{ secure_asset('img/health.png') }}" class="w-100" alt="health" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Health</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/technology.png') }}" class="w-100" alt="technology" />
+            <img src="{{ secure_asset('img/technology.png') }}" class="w-100" alt="technology" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Technology</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/music.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/music.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Music</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/lifestyle.png') }}" class="w-100" alt="music" />
+            <img src="{{ secure_asset('img/lifestyle.png') }}" class="w-100" alt="music" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Lifestyle</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/movies.png') }}" class="w-100" alt="movies" />
+            <img src="{{ secure_asset('img/movies.png') }}" class="w-100" alt="movies" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Movies</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
             </div>
           </div>
           <div class="col-xs-6 col-md-4 mb-3">
-            <img src="{{ asset('img/fitness.png') }}" class="w-100" alt="fitness" />
+            <img src="{{ secure_asset('img/fitness.png') }}" class="w-100" alt="fitness" />
             <div class="border d-flex justify-content-between">
               <p class="font-weight-bold px-2 pt-2">Fitness</p>
               <i class="icon ion-md-arrow-dropright px-3" style="font-size: 1.8em"></i>
