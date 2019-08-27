@@ -261,21 +261,11 @@ $location = 'timeline';
     <!-- Begin content -->
     <div class="page-tab ml-4 mb-3">
       <ul class="nav nav-tabs navbar-light" id="follow-tabs" role="tablist">
-      <li class="nav-item">
-          <a href="#timeline" class="nav-link tab-link active ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
-            <h6>Timeline</h6>
-          </a>
-      </li>
-      <!-- <li class="nav-item">
-          <a href="#technology" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
-            <h6>Technology</h6>
-          </a>
-      </li>
-      <li class="nav-item">
-          <a href="more" class="nav-link tab-link ml-1 pl-0" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
-            <h6>Add More</h6>
-          </a>
-      </li> -->
+        <li class="nav-item">
+            <a href="#timeline" class="nav-link tab-link active" data-toggle="tab" role="tab" aria-controls="category" aria-selected="">
+              <h6 class="mb-0">Timeline</h6>
+            </a>
+        </li>
       </ul>
     </div>
     <div class="tab-content">
@@ -297,7 +287,7 @@ $location = 'timeline';
               <div class="post-content-body mb-0">
                 <span class="text-muted">{{$feeds['tags']}}</span>
                 <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
-                  <h5 class="font-weight-bold">{{$feeds['title']}}</h5>
+                  <h5 class="font-weight-bold on-hover">{{$feeds['title']}}</h5>
                 </a>
                 <p class="mb-1">
                   {{$feeds['des']}}

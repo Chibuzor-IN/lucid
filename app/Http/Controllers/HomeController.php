@@ -82,7 +82,8 @@ foreach ($get as $key => $value) {
     {
       echo "Initiating Fix";
      $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
-      $fix = $fix->fix();
+     
+      //$fix = $fix->fix();
     }
     public function timeline($username)
     {
@@ -412,7 +413,6 @@ return true;
          return response()->json($validator->messages(), 200);
      }
 
-        $post = DB::table('posts')->where('id', $request->post_id)->first();
 
         if (isset($request->parents_id) && $request->parents_id !== "") {
           // code...
@@ -420,16 +420,22 @@ return true;
         }else {
           $parentPost = null;
         }
-
+        if (isset($request->user_id) && $request->user_id !== "") {
+          // code...
+          $puser_id= $request->user_id;
+        }else {
+          $post = DB::table('posts')->where('id', $request->post_id)->first();
+          $puser_id = $post->user_id;
+        }
     //     dd($post);
       $createComment = DB::table('notifications')->insert([
         'post_id'=>$request->post_id,
         'parent_comment_id'=>$parentPost,
         'comment'=>$request->body,
         'sender_id'=> $user_id,
-        'user_id'=>$post->user_id,
+        'user_id'=>$puser_id,
         'status'=> 0,
-        'action'=>"Commented",
+        'action'=>$request->action,
         'type'=>"Post",
       ]);
  //dd($createComment);

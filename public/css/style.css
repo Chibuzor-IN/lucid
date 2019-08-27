@@ -87,11 +87,11 @@ body {
     color: #000000;
     font-weight: 700;
     text-decoration: none;
-    padding: 10px 30px;
+    padding: 10px 15px;
     text-transform: uppercase;
 }
 
-.sidebar-nav ul li a:hover {
+.sidebar-nav ul li a:hover, .on-hover {
     color: #ffffff;
     background: var(--main-color);
     border-radius: 5px;

@@ -51,13 +51,31 @@ $location= 'singlePost';
         </div>
     </div>
 </div>
+<hr style="padding-bottom:20px">
+<div class="">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <!-- convert to markdown script ends -->
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <h6 class="font-weight-bold">Comments: </h6>
+  <div class="comments">
+
+    <div class="" style="text-align: -webkit-center">
+     <div class="spinner" style="    position: inherit;"></div></div>
+</div>
+</div>
+<br><br>
+<hr style="padding-top:20px">
 <div class="">
     <p>Write a comment</p>
     <form method="post" action="" autocomplete="off" enctype="multipart/form-data" class="mb-3 commentForm">
         @csrf
         <div class="form-group">
             <input type="hidden" name="post_id" value="{{ $post['id']  }}">
-            <textarea type="text" name="body" class="form-control h-25" placeholder=""></textarea>
+            <input type="hidden" id='parents_id' name="parents_id" value="">
+            <input type="hidden" id='user_id' name="user_id" value="">
+            <input type="hidden" id='type' name="action" value="Commented">
+            <textarea type="text" id="body" name="body" class="form-control h-25" placeholder="Write a comment"></textarea>
             <span class="text-danger" style="display:none;"> Fill out this field to make a comment </span>
 
         </div>
@@ -71,16 +89,19 @@ $location= 'singlePost';
         </div>
     </form>
 </div>
-<div class="">
-    <h6 class="font-weight-bold">Comments: </h6>
-    <div class="comments"></div>
-</div>
 
 <!-- End of Post Content -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<!-- convert to markdown script ends -->
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+const k= jQuery.noConflict();
+function reply(c_id,user_id,username) {
+                        k("#parents_id").attr("value",c_id);
+                        k("#user_id").attr("value",user_id);
+                        k("#type").attr("value","Replied");
+                        k("#body").focus();
+                        k("#body").attr("placeholder","Replying to @"+username);
+
+}
+</script>
 <script>
 const j = jQuery.noConflict();
  j(document).ready(function (){
@@ -90,7 +111,7 @@ const j = jQuery.noConflict();
             'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
         }
      })
-    setInterval(() => {
+     setInterval(() => {
      j.ajax({
          type:'GET',
          url:route,
@@ -101,7 +122,7 @@ const j = jQuery.noConflict();
          }
      })
 
-    }, 2000);
+     }, 1000);
 
     const commentForm = document.querySelector('.commentForm');
     const commentBtn  = document.querySelector('button[name="comment"]');

@@ -33,7 +33,7 @@ Route::get('loader', function () {
 Route::get('subscribe', function () {
     return view('subscribe');
 });
-//Route::get('fix','HomeController@fix');
+Route::get('fix','HomeController@fix');
 //Route::get('oldfeed','HomeController@old');
 //Route::get('newfeed','HomeController@new');
 
@@ -84,4 +84,6 @@ Route::prefix('{username}')->group(function () {
     Route::post('/notif','pageController@notification')->name('notif');
     Route::get('/notif','pageController@notification')->name('getNotif');
     Route::post('/edit-post','HomeController@editPost');
+    Route::get('/replies','pageController@reply')->name('reply');
+
 });

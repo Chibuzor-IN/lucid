@@ -127,8 +127,8 @@ a.navbar-btn.btn.btn-primary {
 }
 .page-tab ul.nav-tabs a.nav-link {
     border: none;
-    padding: 0.5rem 0.7rem 0.2rem;
-    margin-right: 3rem;
+    padding: 0.5rem 0.7rem  ;
+    margin-right: 1rem;
 }
 .page-tab .nav-tabs a.tab-link:hover {
     color: var(--secondary-color);

@@ -361,9 +361,9 @@ s.ajax({
   });
 });
 
-  setInterval(function(){
+//  setInterval(function(){
 load_unseen_notification();
-}, 2000);
+//}, 2000);
 
 s(document).on('click', '#notif', function(){
  s('.count').html('');

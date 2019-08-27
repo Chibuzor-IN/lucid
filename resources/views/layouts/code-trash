@@ -449,3 +449,30 @@ function deletePost(id){
         //   $pathArr = explode('/',$fullPath);
         //   $fullPath = '/storage/'.Auth::user()->id.'/images//'.end($pathArr);
         // }
+
+        <script>
+    //const c = jQuery.noConflict();
+    $(document).ready(function (){
+      id ={{$comment->id}};
+      //function Getreply() {
+      const route = "{{ route('reply',['username'=>$user->username])  }}"
+      $.ajaxSetup({
+        headers:{
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      })
+      //  setInterval(() => {
+      console.log(route);
+      $.ajax({
+        type:'GET',
+        url:route,
+        data:{id:id},
+        contentType:false,
+        processData:true,
+        success:function (data){
+          $('#reply'+id).html(data);
+        }
+      })
+      //}
+    });
+  </script>

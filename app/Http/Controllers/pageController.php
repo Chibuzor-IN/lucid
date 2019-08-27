@@ -433,10 +433,34 @@ class pageController extends Controller
                 ->join('users','notifications.sender_id','=','users.id')
                 ->select('notifications.*','users.username','users.email','users.image')
                 ->where('notifications.post_id',$post_id)
+                ->where('notifications.parent_comment_id','=',null)
                 ->orderBy('notifications.id','DESC')
                 ->get();
     $carbon =  new Carbon;
-    return view('comments')->with(['comments'=>$comments,'carbon'=>$carbon]);
+  //  dd($comments);
+    $replies = DB::table('notifications')
+            ->join('users','notifications.sender_id','=','users.id')
+            ->select('notifications.*','users.username','users.email','users.image')
+            ->where('notifications.post_id',$post_id)
+            ->where('notifications.parent_comment_id','!=',null)
+            ->orderBy('notifications.id','DESC')
+            ->get();
+     $user = $this->user($username);
+     return view('comments')->with(['comments'=>$comments,"user"=> $user,'carbon'=>$carbon,'replies'=>$replies]);
+  }
+
+  public function reply(Request $request) {
+//dd($request->id);
+    $replies = DB::table('notifications')
+                ->join('users','notifications.sender_id','=','users.id')
+                ->select('notifications.*','users.username','users.email','users.image')
+                ->where('notifications.parent_comment_id','=',$request->id)
+                //->where('notifications.post_id',$post_id)
+                ->orderBy('notifications.id','DESC')
+                ->get();
+    $carbon =  new Carbon;
+   //dd($replies);
+    return view('reply')->with(['replies'=>$replies,'carbon'=>$carbon]);
 
   }
   public function notification(Request $request, $username)
@@ -471,10 +495,11 @@ class pageController extends Controller
                 ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id ] )
                 ->where('notifications.sender_id', "!=", Auth::user()->id)
                 ->orderBy('notifications.id','DESC')
-                ->first();
+                ->get();
 
 //dd();
     if ($notifs->action == 'Commented') {
+      //  foreach ($notif as $notifs) {
             $output .='
             <div class="post-content border p-3">
               <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
@@ -483,9 +508,9 @@ class pageController extends Controller
               </div>
             </div>';
 
-          }
+          //}
 
-  }
+  }}
     if ($notifs->type == 'Following') {
       $notif = DB::table('notifications')
                   ->join('users','notifications.sender_id','=','users.id')
@@ -493,16 +518,17 @@ class pageController extends Controller
                   ->where(['notifications.user_id' => Auth::user()->id] )
                   ->where('notifications.sender_id', "!=", Auth::user()->id)
                   ->orderBy('notifications.id','DESC')
-                  ->first();
-                //  dd($notif);
-
+                  ->get();
+  foreach ($notif as $notifs) {
             $output .='
             <div class="post-content border p-3">
-              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <img src="'.$notifs->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> is now Following you
+                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notifs->username.'">'.$notifs->username.'</a> is now Following you
               </div>
             </div>';
+}
+//dd($output);
 }
     }
 
