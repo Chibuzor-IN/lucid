@@ -105,7 +105,7 @@ function reply(c_id,user_id,username) {
 <script>
 const j = jQuery.noConflict();
  j(document).ready(function (){
-    const route = "{{ secure_url('comment',['username'=>$user->username,'post_id'=>$post['id']])  }}"
+    const route = "{{ route('comment',['username'=>$user->username,'post_id'=>$post['id']])  }}"
     j.ajaxSetup({
         headers:{
             'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
@@ -131,7 +131,7 @@ const j = jQuery.noConflict();
             e.preventDefault();
 
             const formData = new FormData(commentForm);
-            const saveComment = "{{ secure_url('save-comment',['username'=>$user->username])  }}";
+            const saveComment = "{{ route('save-comment',['username'=>$user->username])  }}";
             if(formData.get('body') == "") {
                 j('.text-danger').show();
             }else{
