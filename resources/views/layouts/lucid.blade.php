@@ -108,7 +108,7 @@
             <li class="w-100 text-center"><a class="@if($location ==  'post') active-nav @endif changeHref" href="/{{ $user->username}}">Posts</a></li>
             @endif
             <li class="w-100 text-center"><a class="@if($location ==  'thoughts') active-nav @endif changeHref" href="/{{ $user->username}}/thoughts">Thoughts</a></li>
-            <!-- <li class="w-100 text-center"><a class="@if($location ==  'video') active-nav @endif changeHref" href="{{ route('under-construction') }}">Videos</a></li> -->
+            <!-- <li class="w-100 text-center"><a class="@if($location ==  'video') active-nav @endif changeHref" href="{{ secure_url('under-construction') }}">Videos</a></li> -->
             <li class="w-100 text-center"><a class="@if($location ==  'contact') active-nav @endif changeHref" href="/{{ $user->username}}/contact">Contact</a></li>
           </ul>
         </div>
@@ -217,7 +217,7 @@
                   <div class="spinner" style=" padding: 20px;  width: 2vw;
     height: 2vw;"></div>
                 </div>
-              <a href="{{ route('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+              <a href="{{ secure_url('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
             </div>
           </div>
             @endguest
@@ -313,7 +313,7 @@
 <script>
 const s = jQuery.noConflict();
  s(document).ready(function (){
-    const check = "{{ route('notif',['username'=>$user->username])  }}"
+    const check = "{{ secure_url('notif',['username'=>$user->username])  }}"
 
 function load_unseen_notification(view = '')
 {
@@ -343,7 +343,7 @@ s.ajax({
     //console.log('Fetch Error :-S', err);
     });
   }
-  const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
+  const view_notif = "{{ secure_url('getNotif',['username'=>$user->username])  }}"
 
   s(document).on('click', '#load', function(){
   view = "";

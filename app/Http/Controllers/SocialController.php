@@ -35,7 +35,7 @@ class SocialController extends Controller
             return redirect("/{$dir}");
             // to fix
             // redirect to a route where the username would be set
-         return redirect()->route('home');
+         return redirect()->secure_url('home');
         }
     }
 

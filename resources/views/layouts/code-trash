@@ -397,7 +397,7 @@ function deletePost(id){
 
       j.ajax({
           type:'GET',
-          url:"{{ route('deletePost',['username'=>'ssfd','id'=>"+ j{id} +"])  }}",
+          url:"{{ secure_url('deletePost',['username'=>'ssfd','id'=>"+ j{id} +"])  }}",
           contentType:false,
           processData:false,
           success:function(data){
@@ -455,7 +455,7 @@ function deletePost(id){
     $(document).ready(function (){
       id ={{$comment->id}};
       //function Getreply() {
-      const route = "{{ route('reply',['username'=>$user->username])  }}"
+      const route = "{{ secure_url('reply',['username'=>$user->username])  }}"
       $.ajaxSetup({
         headers:{
           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

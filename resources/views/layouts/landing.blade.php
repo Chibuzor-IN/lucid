@@ -91,10 +91,10 @@
       </div>
       <div class="col-lg-12 text-center">
         <ul class="footer-links">
-          <li><a href="{{ route('under-construction') }}">About us</a></li>
-          <li><a href="{{ route('under-construction') }}">Support</a></li>
-          <li><a href="{{ route('under-construction') }}">Terms and Condition</a></li>
-          <li><a href="{{ route('under-construction') }}">Privacy policy</a></li>
+          <li><a href="{{ secure_url('under-construction') }}">About us</a></li>
+          <li><a href="{{ secure_url('under-construction') }}">Support</a></li>
+          <li><a href="{{ secure_url('under-construction') }}">Terms and Condition</a></li>
+          <li><a href="{{ secure_url('under-construction') }}">Privacy policy</a></li>
           <li><a href="/register">Get Started</a></li>
         </ul>
       </div>

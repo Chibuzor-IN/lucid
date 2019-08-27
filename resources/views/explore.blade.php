@@ -152,7 +152,7 @@
    {{-- <script>
     const j = jQuery.noConflict();
      j(document).ready(function (){
-        const check = "{{ route('notif',['username'=>$user->username])  }}"
+        const check = "{{ secure_url('notif',['username'=>$user->username])  }}"
         j.ajaxSetup({
             headers:{
                 'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
@@ -182,7 +182,7 @@
         //console.log('Fetch Error :-S', err);
         });
       }
-      const view_notif = "{{ route('getNotif',['username'=>$user->username])  }}"
+      const view_notif = "{{ secure_url('getNotif',['username'=>$user->username])  }}"
 
       view = "";
       j.ajax({
