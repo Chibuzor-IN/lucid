@@ -34,6 +34,11 @@ Route::get('subscribe', function () {
     return view('subscribe');
 });
 Route::get('fix','HomeController@fix');
+Route::get('post/{username}','HomeController@checkpost');
+Route::get('feed/{username}','HomeController@checkfeed');
+Route::get('dropfeed','HomeController@dropfeed');
+Route::get('loadfeed/{username}','HomeController@loadfeed');
+Route::get('postFixer/','HomeController@postFixer');
 //Route::get('oldfeed','HomeController@old');
 //Route::get('newfeed','HomeController@new');
 

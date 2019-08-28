@@ -130,7 +130,7 @@
 
 
 <!-- @isset($post['crawlerImage'])
-        <img src="{{URL::to('/')}}/storage/{{$post['crawlerImage']}}" alt="" class="single-post-img" style="width:100%" class="my-1">
+        <img src="{{secure_url('/')}}/storage/{{$post['crawlerImage']}}" alt="" class="single-post-img" style="width:100%" class="my-1">
         @endisset -->
 
 

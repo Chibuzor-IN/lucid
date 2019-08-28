@@ -5,6 +5,7 @@ use Parsedown;
 use Mni\FrontYAML\Parser;
 use KzykHys\FrontMatter\FrontMatter;
 use Symfony\Component\Finder\Finder;
+use Illuminate\Support\Str;
 use KzykHys\FrontMatter\Document as Doc;
 use Auth;
 use DB;
@@ -149,9 +150,8 @@ class Document
         $image = null;
       }
 
-      $slug = str_replace(' ', '-', $title);
 
-      $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+      $slug = Str::slug($title);
       $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
       $insertPosts = DB::table('posts')->insert([
         'user_id'=>Auth::user()->id,
@@ -159,7 +159,7 @@ class Document
         'content'=>$content,
         'tags'=>$tags,
         'image'=> $image,
-        'slug'=>strtolower($slug)
+        'slug'=> $slug
       ]);
 
       if ($insertPosts) {
@@ -190,7 +190,9 @@ class Document
           $image = null;
         }
 
-        $slug = str_replace(' ', '-', $title);
+        $slug = Str::slug($title);
+        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+        //$slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
         $oldpost = DB::table('posts')->where('id',$post_id)->first('title');
       //  dd($oldpost->title);
         $updateFeeds = DB::table('extfeeds')->where('title',$oldpost->title)
@@ -199,16 +201,16 @@ class Document
           'des'=>$content,
           'tags'=>$tags,
           'image'=> $image,
+          'links'=> $slug
+
         ]);
-        $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
-        $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
         $updatePosts = DB::table('posts')->where('id',$post_id)->update([
           'user_id'=>Auth::user()->id,
           'title'=>$title,
           'content'=>$content,
           'tags'=>$tags,
           'image'=> $image,
-          'slug'=>strtolower($slug)
+          'slug'=> $slug
         ]);
 
         //dd($updateFeeds);
@@ -306,8 +308,7 @@ class Document
 
             foreach ($posts as $key => $value) {
               $title = strip_tags($value['title']);
-              $slug = str_replace(' ', '-', $title);
-              $slug = preg_replace("/(&#[0-9]+;)/", "", $slug);
+              $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
 
               $insertPosts = DB::table('posts')->insert([
@@ -316,7 +317,7 @@ class Document
                 'content'=> $value['body'],
                 'tags'=>$value['tags'],
                 'image'=> $value['image'],
-                'slug'=>strtolower($slug)
+                'slug'=>$slug
               ]);
 
 
@@ -546,7 +547,7 @@ public function checker()
                         'site_image'       => $user->image,
                         'title'            => strip_tags($value['title']),
                         'des'             =>  strip_tags($value['body']),
-                        'link'             => $this->user."/post/" . strtolower(strip_tags($value['slug' ])),
+                        'link'             => $this->user."/post/" . $value['slug' ],
                         'date'    => $value['date'],
                         'image'   => $value['image'],
                       ]);
@@ -1004,8 +1005,9 @@ $user = Auth::user();
     public function getPost($username,$postSlug){
     //  $user = $this->user($username);
       $user =   DB::table('users')->where('username', $username)->first();
-
+    //   echo $postSlug;
       $post = DB::table('posts')->where(['slug'=>$postSlug,'user_id'=>$user->id])->first();
+    //   dd($post);
       if(!empty($post)) {
 
         $parsedown  = new Parsedown();
@@ -1014,7 +1016,7 @@ $user = Auth::user();
         $content['title'] =$post->title;
         $content['body'] = $parsedown->text($post->content);
         $content['date'] = $createdAt->format('M jS, Y h:i A');
-        $content['slug'] = $this->clean($post->slug);
+        $content['slug'] = $post->slug;
         $content['id'] = $post->id;
         return $content;
 
@@ -1070,7 +1072,7 @@ $user = Auth::user();
             $content['title'] = $post->title;
             $content['body']  = $this->trim_words($postContent, 200);
             $content['tags']  = $post->tags;
-            $content['slug']  = $this->clean($post->slug);
+            $content['slug']  = $post->slug;
             $content['image'] = $first_img;
             $content['date']  =  $createdAt->format('M jS, Y h:i A');;
             $content['id'] = $post->id;

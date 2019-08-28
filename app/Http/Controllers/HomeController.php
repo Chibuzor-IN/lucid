@@ -5,6 +5,7 @@ namespace Lucid\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Validator;
 use DB;
 use Storage;
@@ -82,7 +83,7 @@ foreach ($get as $key => $value) {
     {
       echo "Initiating Fix";
      $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
-     
+
       //$fix = $fix->fix();
     }
     public function timeline($username)
@@ -400,7 +401,62 @@ return true;
 
     }
 
+    // debuging tools
+public function checkpost($value)
+{
+   $post = DB::table('posts')->where('id',$value)->first();
+ echo "title: ".$post->title."</br>" ;
+ echo "id: ".$post->id."</br>";
+ echo "user_id: ".$post->user_id."</br>";
+ echo "content: ".$post->content."</br>";
+ echo "slug: ".$post->slug."</br>";
+//print_r( $post);
+echo "feed</br></br></br></br>";
+$post = DB::table('extfeeds')->where('title',$post->title)->first();
+echo "post:title ".$post->title."</br>";
+echo "post:slug ".$post->link."</br>";
 
+$title = "this is live.com live?";
+//$slug = str_replace(' ', '-', $title);
+
+
+echo Str::slug($title);
+}
+public function dropfeed()
+{
+
+  $c = \Lucid\extfeeds::getQuery()->delete();
+  print_r($c);
+}
+public function loadfeed($user)
+{
+
+$post = new \Lucid\Core\Document($user);
+$post = $post->fetchAllRss();
+//dd($post );
+
+print_r($post);
+}
+
+public function postFixer()
+{
+  $oldpost = DB::table('posts')->get();
+  foreach ($oldpost as $key => $value) {
+  //  dd($value->title);
+    $slug = Str::slug($value->title);
+    $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
+
+    $updateFeeds = DB::table('posts')->where(['title'=>$value->title, 'user_id' => $value->user_id])
+    ->update([
+      'slug'=> $slug
+    ]);
+  }
+//  dd($oldpost->title);
+
+print_r($updateFeeds);
+}
+
+//end of debuging tools
     public function saveComment(Request $request, $username) {
 
           $user_id = Auth::user()->id;

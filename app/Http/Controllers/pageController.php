@@ -109,6 +109,7 @@ class pageController extends Controller
     }
 
     public function singlePostPage($username,$postSlug){
+      // return $postSlug;
         if(!$this->user($username)) {
             return abort(404);
         }
@@ -504,7 +505,7 @@ class pageController extends Controller
             <div class="post-content border p-3">
               <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.URL::to('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
               </div>
             </div>';
 
@@ -524,7 +525,7 @@ class pageController extends Controller
             <div class="post-content border p-3">
               <img src="'.$notifs->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.URL::to('/').'/'.$notifs->username.'">'.$notifs->username.'</a> is now Following you
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notifs->username.'">'.$notifs->username.'</a> is now Following you
               </div>
             </div>';
 }

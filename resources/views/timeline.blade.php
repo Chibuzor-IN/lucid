@@ -286,7 +286,7 @@ $location = 'timeline';
               <img src="{{$feeds['site_image']}}" class="timeline-img" alt="{{$feeds['site']}}" />
               <div class="post-content-body mb-0">
                 <span class="text-muted">{{$feeds['tags']}}</span>
-                <a href="{{URL::to('/')}}/{{$feeds['link']}}" class="no-decoration">
+                <a href="{{secure_url('/')}}/{{$feeds['link']}}" class="no-decoration">
                   <h5 class="font-weight-bold on-hover">{{$feeds['title']}}</h5>
                 </a>
                 <p class="mb-1">
@@ -295,7 +295,7 @@ $location = 'timeline';
                 <div class="row">
                   <span class="col-6 col-sm-6 col-md-8">
                     <small>
-                    <a href="{{URL::to('/')}}/{{$feeds['username']}}" class="text-muted">{{$feeds['site']}}</a>
+                    <a href="{{secure_url('/')}}/{{$feeds['username']}}" class="text-muted">{{$feeds['site']}}</a>
                     <span class="font-weight-bold">.</span>
                     <span class="text-muted">{{$feeds['date']}}</span>
                     </small>
@@ -303,7 +303,7 @@ $location = 'timeline';
              <!--     <span class="col-6 col-sm-6 col-md-4">
                     <a href="" class="mr-1"><i class="icon ion-md-thumbs-up text-warning" style="font-size: 1.2em;"></i> 5</a>
                     <a href="" class="mr-1"><i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i> 5</a>
-                    <a href="{{URL::to('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
+                    <a href="{{secure_url('/')}}/{{$feeds['link']}}"><i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i> 5</a>
                   </span>  -->
                 </div>
               </div>

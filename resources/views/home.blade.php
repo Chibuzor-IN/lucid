@@ -38,7 +38,7 @@ $location= 'home';
 @else
 <div class="post-content">
   <div class="post-image d-none d-lg-flex d-xl-flex d-md-flex">
-    <img src="{{URL::to('/')}}/storage/{{$feeds['image']}}" class="img-fluid post-img" alt="Looking For Where To Spend Christmas in the comform of your home" />
+    <img src="{{secure_url('/')}}/storage/{{$feeds['image']}}" class="img-fluid post-img" alt="Looking For Where To Spend Christmas in the comform of your home" />
   </div>
   <a class="no-decoration" href="{{$feeds['link']}}">
     <div class="post-content-body">

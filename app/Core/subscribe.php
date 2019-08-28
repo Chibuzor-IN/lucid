@@ -177,7 +177,7 @@ public function extract($url)
           $link = $r->getElementsByTagName('link')->item(0)->nodeValue;
           $description = $r->getElementsByTagName('description')->item(0)->nodeValue;
           if (is_null($r->getElementsByTagName('image')->item(0)->nodeValue)) {
-          $image ="resources/themes/ghost/assets/img/bubbles.png";
+          $image ="resources/themes/ghost/secure_assets/img/bubbles.png";
         }else {
           $image = $r->getElementsByTagName('url')->item(0)->nodeValue;
 

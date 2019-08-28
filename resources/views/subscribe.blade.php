@@ -10,7 +10,7 @@ $location= 'subscribe';
 
 @endsection
 @section('content')
-<form method="POST" action="{{URL::to('/')}}/{{Auth::user()->username}}/extrss">
+<form method="POST" action="{{secure_url('/')}}/{{Auth::user()->username}}/extrss">
     @csrf
 
   <div class="form-group">

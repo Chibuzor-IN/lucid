@@ -158,7 +158,7 @@
                 <br>
                 <h4 class="text-main">Unfollow {{$user->name}}</h4>
                 <p class="small"><em>Are you sure you want to Unfollow {{$user->name}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
-                <form method="POST" action="{{URL::to('/')}}/{{$user->username}}/unfollow">
+                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/unfollow">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->name}}">
                   <button type="submit" class="btn btn-primary">UnFollow</button>
@@ -181,7 +181,7 @@
                 <br>
                 <h4 class="text-main">Follow {{$user->name}}</h4>
                 <p class="small"><em>Do you have or would love to have Lucid installed on your domain?<br /> Click the button below to follow me</em></p>
-                <form method="POST" action="{{URL::to('/')}}/{{$user->username}}/addrss">
+                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/addrss">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->username}}">
                   <button type="submit" class="btn btn-primary">Follow me on Lucid</button>
