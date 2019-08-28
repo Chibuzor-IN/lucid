@@ -446,6 +446,7 @@ class pageController extends Controller
             ->where('notifications.parent_comment_id','!=',null)
             ->orderBy('notifications.id','DESC')
             ->get();
+          //  dd(  $replies);
      $user = $this->user($username);
      return view('comments')->with(['comments'=>$comments,"user"=> $user,'carbon'=>$carbon,'replies'=>$replies]);
   }
@@ -482,13 +483,13 @@ class pageController extends Controller
                 ->where('sender_id', "!=", Auth::user()->id)
                 ->get();
 
-              //  dd($notif);
+                //dd($notif);
     $output = '';
   if (count($notif) > 0) {
 
     foreach ($notif as $notifs) {
-      if ($notifs->type == "Post") {
 
+      if ($notifs->type == "Post") {
     $notif = DB::table('notifications')
                 ->join('users','notifications.sender_id','=','users.id')
                 ->join('posts','notifications.post_id','=','posts.id')
@@ -496,10 +497,10 @@ class pageController extends Controller
                 ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id ] )
                 ->where('notifications.sender_id', "!=", Auth::user()->id)
                 ->orderBy('notifications.id','DESC')
-                ->get();
+                ->first();
 
-//dd();
-    if ($notifs->action == 'Commented') {
+              //  dd($notif);
+    if ($notif->action == 'Commented') {
       //  foreach ($notif as $notifs) {
             $output .='
             <div class="post-content border p-3">
@@ -511,27 +512,35 @@ class pageController extends Controller
 
           //}
 
-  }}
+  }
+  if ($notif->action == 'Replied') {
+    //  foreach ($notif as $notifs) {
+          $output .='
+          <div class="post-content border p-3">
+            <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+            <div class="post-content-body">
+              <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> Replied your comment on <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+            </div>
+          </div>';
+
+        //}
+
+}
+}
     if ($notifs->type == 'Following') {
-      $notif = DB::table('notifications')
-                  ->join('users','notifications.sender_id','=','users.id')
-                  ->select('notifications.*', 'users.username','users.email','users.image')
-                  ->where(['notifications.user_id' => Auth::user()->id] )
-                  ->where('notifications.sender_id', "!=", Auth::user()->id)
-                  ->orderBy('notifications.id','DESC')
-                  ->get();
-  foreach ($notif as $notifs) {
+      $user= DB::table('users')->where('id', $notifs->sender_id)->first();
+
             $output .='
             <div class="post-content border p-3">
-              <img src="'.$notifs->image.'" class="img-fluid img-thumb" alt="user" />
+              <img src="'.$user->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
-                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notifs->username.'">'.$notifs->username.'</a> is now Following you
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$user->username.'">'.$user->username.'</a> is now Following you
               </div>
             </div>';
 }
 //dd($output);
 }
-    }
+
 
   }else{
         $output .= '
