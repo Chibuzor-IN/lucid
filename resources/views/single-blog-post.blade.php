@@ -105,13 +105,15 @@ function reply(c_id,user_id,username) {
 <script>
 const j = jQuery.noConflict();
  j(document).ready(function (){
+   function getComment() {
+
     const route = "{{ secure_url($user->username.'/comments',['post_id'=>$post['id']])  }}"
     j.ajaxSetup({
         headers:{
             'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')
         }
      })
-     setInterval(() => {
+     setTimeout(() => {
      j.ajax({
          type:'GET',
          url:route,
@@ -122,8 +124,11 @@ const j = jQuery.noConflict();
          }
      })
 
-     }, 1000);
-
+     }, 5000);
+   }
+     // initial call, or just call refresh directly
+     // initial call, or just call refresh directly
+     setTimeout(getComment(), 5000);
     const commentForm = document.querySelector('.commentForm');
     const commentBtn  = document.querySelector('button[name="comment"]');
     if(commentBtn !=null){
@@ -150,6 +155,7 @@ const j = jQuery.noConflict();
                        // console.log(response);
                         commentBtn.removeAttribute('disabled');
                         commentForm.reset();
+                        getComment();
                     }
                 })
             }
