@@ -105,7 +105,7 @@ function reply(c_id,user_id,username) {
 <script>
 const j = jQuery.noConflict();
  j(document).ready(function (){
-    const route = "{{ secure_url($user->username.'comment/',['post_id'=>$post['id']])  }}"
+    const route = "{{ secure_url($user->username.'/comments',['post_id'=>$post['id']])  }}"
     j.ajaxSetup({
         headers:{
             'X-CSRF-TOKEN': j('meta[name="csrf-token"]').attr('content')

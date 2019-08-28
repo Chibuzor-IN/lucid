@@ -343,7 +343,7 @@ s.ajax({
     //console.log('Fetch Error :-S', err);
     });
   }
-  const view_notif = "{{ secure_url($user->username.'/getNotif')  }}"
+  const view_notif = "{{ secure_url($user->username.'/notif')  }}"
 
   s(document).on('click', '#load', function(){
   view = "";
