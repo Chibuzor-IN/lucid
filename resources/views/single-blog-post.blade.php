@@ -131,7 +131,7 @@ const j = jQuery.noConflict();
             e.preventDefault();
 
             const formData = new FormData(commentForm);
-            const saveComment = "{{ secure_url($user->username.'save-comment')  }}";
+            const saveComment = "{{ secure_url($user->username.'/save-comment')  }}";
             if(formData.get('body') == "") {
                 j('.text-danger').show();
             }else{
