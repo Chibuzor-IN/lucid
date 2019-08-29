@@ -284,7 +284,7 @@ class Document
                 $time = $parsedown->text($yaml['timestamp']);
                 $url = $parsedown->text($yaml['post_dir']);
                 $content['title'] = $title;
-                $content['body'] = $this->trim_words($bd, 200);
+                $content['body'] = $bd;
                 $content['url'] = $url;
                 $content['timestamp'] = $time;
                 $content['tags'] = $tags;
@@ -310,7 +310,11 @@ class Document
               $title = strip_tags($value['title']);
               $slug = Str::slug($title);
               $slug = $slug ."-".substr(md5(uniqid(mt_rand(), true)), 0, 3);
-
+              if(DB::table('posts')->where(['title' , $title, 'user_id' = Auth::user()->id])->exists() ==1){
+                $updatePosts = DB::table('posts')->update([
+                  'content'=> $value['body']
+                ]);
+              }else {
               $insertPosts = DB::table('posts')->insert([
                 'user_id'=>Auth::user()->id,
                 'title'=>  $title,
@@ -319,7 +323,7 @@ class Document
                 'image'=> $value['image'],
                 'slug'=>$slug
               ]);
-
+}
 
             };
           Storage::deleteDirectory($this->user.'/content/'.$postTypeSubDir.'/');
