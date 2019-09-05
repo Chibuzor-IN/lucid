@@ -23,7 +23,7 @@
             <p class="text-muted my-4">New to Lucid? <a href="/register" class="text-secondary font-weight-bold">Sign Up</a></p>
         </div>
         <div class="d-inline-block w-custom">
-            <a href="{{ url('/login/google') }}" class="btn border-main text-main my-3 w-100"><i class="icon ion-logo-google p-1"></i> Continue with Google</a>
+            <a href="{{ secure_url('/login/google') }}" class="btn border-main text-main my-3 w-100"><i class="icon ion-logo-google p-1"></i> Continue with Google</a>
             <form class="mt-3">
                 <div class="form-group">
                     <input type="email" class="form-control" aria-describedby="emailHelp" placeholder="Your email address">

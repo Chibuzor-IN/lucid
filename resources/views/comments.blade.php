@@ -6,7 +6,7 @@
 @forelse($comments as $comment)
 
 <div class="post-content mt-4 mb-2 pb-0">
-    <img src="{{ $comment->image }}" class="img-fluid" style="border-radius:50%;object-fit:cover;" alt="user" width="55" height="56"/>
+    <img src="{{ $comment->image }}" class="" style="border-radius:50%;object-fit:cover;" alt="user" width="55" height="56"/>
     <div class="post-content-body">
     <p class="font-weight-bold m-0">
       <a href="{{secure_url('/').'/'.$comment->username }}"> {{ '@'.$comment->username  }}</a> - <small class="text-muted">@php

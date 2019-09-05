@@ -5,13 +5,47 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <meta name="msvalidate.01" content="0D04E9AD3D60609FF1D1A5D5F3705A04" />
+  <meta name="google-site-verification" content="zWGhooabnrUzUwys6O7e0GEndWQGqN26crtsYinFxc0" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @auth
   <meta name="username" content="{{ Auth::user()->username }}">
   <meta name="user_id" content="{{ Auth::user()->id }}">
   @endauth
-  <!-- <title>{{ config('app.name', 'Lucid') }}</title> -->
+  <meta content="@yield('img')" property='og:image' />
+  <meta content="@yield('desc')" name='og:description' />
+  <meta content='@yield("tags")' name='keywords' />
+
+  <!-- twiter card -->
+  <meta content='summary_large_image' name='twitter:card' />
+  <meta content="@yield('img')" name='twitter:image' />
+  <meta content='{{ secure_url('/') }}' name='twitter:domain' />
+  <meta content='@yield("title")' name='twitter:title' />
+  <meta content='@yield("desc")' name='twitter:description' />
+  <meta content='' name='twitter:site' />
+  <meta content='' name='twitter:creator' />
+
+  <!-- Metadata Facebook -->
+  <meta content='Lucid' property='og:site_name' />
+  <meta content='@yield("url")' property="og:url" />
+  <meta content='@yield("title")' property='og:title' />
+  <meta content='article' property='og:type' />
+  <meta content='' property='fb:admins' />
+  <meta content='517404062134205' property='fb:app_id' />
+
+
+
+  <!-- Social Media Profile Meta Tag -->
+  <meta content='Nigeria' name='geo.placename' />
+  <meta content='{{ $user->name }}' name='Author' />
+  <meta content='general' name='rating' />
+  <meta content='id' name='geo.country' />
+  <meta content='en_US' property='og:locale' />
+  <meta content='en_GB' property='og:locale:alternate' />
+  <meta content='id_ID' property='og:locale:alternate' />
   <title>@yield('title')</title>
+
+
   <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet" />
@@ -68,6 +102,31 @@
       }
     }
   </style>
+
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId: '{your-app-id}',
+        cookie: true,
+        xfbml: true,
+        version: '{api-version}'
+      });
+
+      FB.AppEvents.logPageView();
+
+    };
+
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {
+        return;
+      }
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
 </head>
 
 <body id="preloader">
@@ -81,7 +140,7 @@
       <!-- Beginning of Sidebar -->
       <div class="col-10 col-sm-4 pb-0 mb-0 pt-2 d-none d-lg-block" id="sidebar">
         <a class="d-lg-none" id="sidebarDismiss"><i class="icon ion-md-close-circle" style="font-size: 1.8em"></i></a>
-        <a href="/{{ $user->username}}" class="changeHref"><img id="user-avatar" src="{{$user->image}}" class="img-fluid" /></a>
+        <a href="/{{ $user->username}}" class="changeHref"><img id="user-avatar" src="{{\Illuminate\Support\Str::replaceFirst('_small_', '_large_',$user->image) }}" class="img-fluid mt-3" /></a>
         <a href="/{{ $user->username}}" class="no-decoration changeHref">
           <h3 id="user-name" class="pt-2">{{ $user->name}}</h3>
         </a>
@@ -127,20 +186,22 @@
         <div class="user-stats text-center mt-3 pb-0">
           <div class="d-inline-block">
             @if (empty($count))
-            <a href="/{{$user->username}}/following" class="pr-2 changeHref">0 <br /> <small class="text-muted">Following</small></a>
+            <a href="/{{$user->username}}/following" class="pr-2 changeHref d-block" style="line-height: 15px;">0 <small class="text-muted d-block">Following</small></a>
             @else
-            <a href="/{{$user->username}}/following" class="pr-2 changeHref">{{$count}} <br /> <small class="text-muted">Following</small></a>
+            <a href="/{{$user->username}}/following" class="pr-2 changeHref d-block" style="line-height: 15px;">{{$count}} <small class="text-muted d-block">Following</small></a>
             @endif
           </div>
           <div class="d-inline-block">
             @if (empty($fcount))
-            <a href="/{{$user->username}}/followers" class="changeHref">0 <br /> <small class="text-muted">Followers</small></a>
+            <a href="/{{$user->username}}/followers" class="changeHref d-block" style="line-height: 15px;">0 <small class="text-muted">Followers</small></a>
             @else
-            <a href="/{{$user->username}}/followers" class="changeHref">{{$fcount}} <br /> <small class="text-muted">Followers</small></a>
+            <a href="/{{$user->username}}/followers" class="changeHref d-block" style="line-height: 15px;">{{$fcount}} <small class="text-muted d-block">Followers</small></a>
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" /> Powered by Lucid</small></a>
+            <a href="https://lucid.blog"> <small class="text-muted d-flex justify-content-center"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" />
+                <p class="mb-0 ml-1">Powered by Lucid</p>
+              </small></a>
           </div>
         </div>
       </div>
@@ -206,7 +267,11 @@
           <a class="d-lg-none" id="sidebarToggle"><i class="icon ion-md-list" style="font-size: 1.8em"></i></a>
           @guest
           @else
-        <div class="dropdown">
+          <div class="dropdown">
+            @guest
+            @else
+            <a href="/{{ Auth::user()->username}}" class="mr-1 pr-4 text-main"><i class="icon ion-md-home cursor-pointer" style="font-size: 1.8em;"></i></a>
+            @endguest
             <a class="mr-5 pr-4 notification text-main" id="load" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon ion-md-notifications cursor-pointer" style="font-size: 1.8em;"></i>
               <span class="badge badge-danger count"></span>
               <span class="sr-only">unread notifications</span></a>
@@ -214,24 +279,24 @@
               <h6 class="font-weight-bold mx-2">Notifications</h6>
               <div id="notif">
 
-                  <div class="spinner" style=" padding: 20px;  width: 2vw;
+                <div class="spinner" style=" padding: 20px;  width: 2vw;
     height: 2vw;"></div>
-                </div>
+              </div>
               <a href="{{ secure_url('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
             </div>
           </div>
-            @endguest
+          @endguest
           <div class="dropdown" id="lucid-dropdown">
             <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <img src="{{ secure_asset('img/lucid-logo.png') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
             </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="navbarDropdown">
               @guest
               <a class="dropdown-item" href="{{ secure_url('/login') }}">{{ __('Login') }}</a>
               @else
-              <a class="dropdown-item changeHref" href="/{{ Auth::user()->username}}">Home</a>
-              <a href="/{{ $user->username}}/settings" class="dropdown-item changeHref">Settings</a>
-              <a class="dropdown-item changeHref" href="/{{ $user->username}}/logout">
+ <!--              <a class="dropdown-item changeHref border-bottom note" href="/{{ Auth::user()->username}}">Home</a> -->
+              <a href="/{{ $user->username}}/settings" class="dropdown-item note changeHref border-bottom">Settings</a>
+              <a class="dropdown-item note changeHref" href="/{{ $user->username}}/logout">
                 {{ __('Logout') }}
               </a>
 
@@ -265,7 +330,56 @@
     )
     // $(`a[href="${anchor}"]`).tab('show')
   </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script>
+    const a = jQuery.noConflict();
+
+    function like(action, id) {
+
+      url = "{{ secure_url($user->username.'/like')  }}";
+      //  id=id+"&act="+action;
+      a.ajax({
+          url: url,
+          type: "Get",
+          data: {
+            id: id,
+            act: action
+          },
+          dataType: "json",
+        })
+        .then(
+          function(data) {
+
+            //  console.log(data);
+            a('#like' + id).html(data.button);
+            //  a('#count'+id).html(data.count);
+          });
+
+    }
+
+    function love(action, id) {
+
+      url = "{{ secure_url($user->username.'/love')  }}";
+      //  id=id+"&act="+action;
+      a.ajax({
+          url: url,
+          type: "Get",
+          data: {
+            id: id,
+            act: action
+          },
+          dataType: "json",
+        })
+        .then(
+          function(data) {
+
+            //  console.log(data);
+            a('#love' + id).html(data.button);
+            //  a('#count'+id).html(data.count);
+          });
+
+    }
+
     function changeUrl(e) {
       history.pushState(null, null, `/${document.getElementById("username").value+'/'+e}`)
     }
@@ -296,7 +410,6 @@
 
     });
   </script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-28315089-7"></script>
   <script>
@@ -310,71 +423,73 @@
   </script>
   @guest
   @else
-<script>
-const s = jQuery.noConflict();
- s(document).ready(function (){
-    const check = "{{ secure_url($user->username.'/notif')  }}"
+  <script>
+    const s = jQuery.noConflict();
+    s(document).ready(function() {
+      const check = "{{ secure_url($user->username.'/notif')  }}"
 
-function load_unseen_notification(view = '')
-{
-  s.ajaxSetup({
-    headers:{
-      'X-CSRF-TOKEN': s('meta[name="csrf-token"]').attr('content')
-    }
-  })
-s.ajax({
-  url:check,
-  method:"POST",
-  data:{view:view},
-  dataType:"json",
-  })
-.then (
-  function(data) {
-  //  console.log(data);
+      function load_unseen_notification(view = '') {
+        s.ajaxSetup({
+          headers: {
+            'X-CSRF-TOKEN': s('meta[name="csrf-token"]').attr('content')
+          }
+        })
+        s.ajax({
+            url: check,
+            method: "POST",
+            data: {
+              view: view
+            },
+            dataType: "json",
+          })
+          .then(
+            function(data) {
+              //  console.log(data);
 
-   if(data.unseen_notification > 0)
-   {
-    s('.count').html(data.unseen_notification);
-   }
+              if (data.unseen_notification > 0) {
+                s('.count').html(data.unseen_notification);
+              }
 
 
- })
-.catch(function(err) {
-    //console.log('Fetch Error :-S', err);
-    });
-  }
-  const view_notif = "{{ secure_url($user->username.'/notif')  }}"
+            })
+          .catch(function(err) {
+            //console.log('Fetch Error :-S', err);
+          });
+      }
+      const view_notif = "{{ secure_url($user->username.'/notif')  }}"
 
-  s(document).on('click', '#load', function(){
-  view = "";
-  s.ajax({
-    url:view_notif,
-    method:"Get",
-    data:{view:view},
-    dataType:"json",
+      s(document).on('click', '#load', function() {
+        view = "";
+        s.ajax({
+            url: view_notif,
+            method: "Get",
+            data: {
+              view: view
+            },
+            dataType: "json",
+          })
+          .then(
+            function(data) {
+
+              //    console.log(data);
+              s('#notif').html(data.notification);
+            });
+      });
+
+      //  setInterval(function(){
+      load_unseen_notification();
+      //}, 2000);
+
+      s(document).on('click', '#notif', function() {
+        s('.count').html('');
+        load_unseen_notification('yes');
+      });
+
+
+
+
     })
-  .then (
-    function(data) {
-
-    //    console.log(data);
-    s('#notif').html(data.notification);
-  });
-});
-
-//  setInterval(function(){
-load_unseen_notification();
-//}, 2000);
-
-s(document).on('click', '#notif', function(){
- s('.count').html('');
- load_unseen_notification('yes');
-  });
-
-
-
-})
-
-</script>
+  </script>
   @endguest
 </body>
 

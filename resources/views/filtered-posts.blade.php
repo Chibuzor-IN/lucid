@@ -1,8 +1,8 @@
 @forelse($posts as $post)
 <div class="post-content">
-    <img src="{{ secure_asset('img/mb-2.png') }}" class="img-fluid" alt="user" />
+    <img src="{{ $post['user_img'] }}" class="img-fluid" style="border-radius:50%;object-fit:cover;" alt="user" width="55" height="56"/>
     <div class="post-content-body">
-    <h5 class="font-weight-bold">{{ $post['title']  }}</h5>
+    <h5 class="font-weight-bold"><a class="text-dark" style="text-decoration:none;" href="{{ route('post',['username'=>$post['username'],'postTitle'=>$post['slug']]) }}">{{ $post['title']  }}</a></h5>
     <p class="">
      {!! $post['body'] !!}
     </p>

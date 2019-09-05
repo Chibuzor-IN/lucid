@@ -161,6 +161,7 @@ return [
         Lucid\Providers\RouteServiceProvider::class,
         Lucid\Providers\CoreServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class
 
     ],
 
@@ -213,6 +214,7 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Document' => App\Facades\Document::class,
         'Subscribe' => App\Facades\Subscribe::class,
+        'Image' => Intervention\Image\Facades\Image::class
 
     ],
 

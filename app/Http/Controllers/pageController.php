@@ -5,10 +5,14 @@ namespace Lucid\Http\Controllers;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
+//use Illuminate\Support\Str;
 use Validator;
 use Parsedown;
 use URL;
+use Str;
+use Lucid\Notification;
 use Carbon\Carbon;
+
 class pageController extends Controller
 {
     public function user($username) {
@@ -19,6 +23,34 @@ class pageController extends Controller
         }
         return $user_exists[0];
     }
+
+public function Feeds($username)
+{
+
+  if(!$this->user($username)) {
+      return abort(404);
+  }
+  $user = $this->user($username);
+  if(Auth::user() && Auth::user()->username == $username){
+          $user = Auth::user();
+          $username = $user->username;
+
+          $feeds = new \Lucid\Core\Document($username);
+
+          $feeds = $feeds->MyFeeds();
+        //  dd($feeds);
+
+  return view('feeds', ['posts' => $feeds]);
+
+  }else {
+
+
+      $app = new \Lucid\Core\Document($username);
+      $feeds =$app->Feeds();
+
+    return view('feeds', ['posts' => $feeds]);
+}
+}
 
     public function homePage($username)
     {
@@ -32,7 +64,7 @@ class pageController extends Controller
 
                 $post = new \Lucid\Core\Document($username);
 
-                $post = $post->Feeds();
+                $post = $post->MyFeeds();
               //  dd($post);
             //$post =[];
                 $sub = new \Lucid\Core\Subscribe($username);
@@ -53,8 +85,13 @@ class pageController extends Controller
                 }
 
 
-  //dd($fcheck);
-                return view('timeline', ['posts' => $post,'fcheck' => $fcheck,'user'=>$user,'fcount'=>$fcount, 'count' => $count]);
+  //dd($likes);
+                $tabs = DB::table('interests')->get();
+                return view('timeline', [
+                  'fcheck' => $fcheck,
+                  'user'=>$user,
+                  'fcount'=>$fcount,
+                  'count' => $count]);
 
         }else {
 
@@ -90,7 +127,7 @@ class pageController extends Controller
             //  $follower = $app->subscription();
                //dd($follower);
 
-               $userposts=$app->getPosts($username);
+               $userposts=$app->getPublishedPosts($username);
 
               return view('home', ['userposts' => $userposts,'user'=>$user,'fcheck' => $fcheck,'fcount'=>$fcount, 'count' => $count]);
 
@@ -211,8 +248,18 @@ class pageController extends Controller
               else {
                 $fcheck = "no";
               }
-
-            return view('post',compact('user','posts'), ['fcheck' => $fcheck, 'fcount'=>$fcount, 'count' => $count ]);
+              $post_id = isset($post_id) ? $post_id:'';
+              $likes = DB::table('notifications')
+                      ->where('post_id',$post_id)
+                      ->where('notifications.action','=',"like")
+                      ->get();
+                    //  dd(  $like );
+            return view('post',compact('user','posts'), [
+              'fcheck' => $fcheck,
+              'fcount'=>$fcount,
+              'count' => $count,
+              'likes' => $likes
+            ]);
         }else {
             return redirect('/'.$username);
         }
@@ -435,6 +482,7 @@ class pageController extends Controller
                 ->select('notifications.*','users.username','users.email','users.image')
                 ->where('notifications.post_id',$post_id)
                 ->where('notifications.parent_comment_id','=',null)
+                ->where('notifications.action','Commented')
                 ->orderBy('notifications.id','DESC')
                 ->get();
     $carbon =  new Carbon;
@@ -444,6 +492,7 @@ class pageController extends Controller
             ->select('notifications.*','users.username','users.email','users.image')
             ->where('notifications.post_id',$post_id)
             ->where('notifications.parent_comment_id','!=',null)
+            ->where('notifications.action','Commented')
             ->orderBy('notifications.id','DESC')
             ->get();
           //  dd(  $replies);
@@ -481,9 +530,11 @@ class pageController extends Controller
     $notif = DB::table('notifications')
                 ->where(['user_id' => Auth::user()->id] )
                 ->where('sender_id', "!=", Auth::user()->id)
+                ->orderBy('notifications.id','DESC')
+                ->take(5)
                 ->get();
 
-                //dd($notif);
+          //      dd($notif);
     $output = '';
   if (count($notif) > 0) {
 
@@ -496,14 +547,14 @@ class pageController extends Controller
                 ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
                 ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id ] )
                 ->where('notifications.sender_id', "!=", Auth::user()->id)
-                ->orderBy('notifications.id','DESC')
                 ->first();
+
 
               //  dd($notif);
     if ($notif->action == 'Commented') {
       //  foreach ($notif as $notifs) {
             $output .='
-            <div class="post-content border p-3">
+            <div class="post-content border p-3 d-flex align-items-center">
               <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
               <div class="post-content-body">
                 <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> commented on your post <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
@@ -538,6 +589,48 @@ class pageController extends Controller
               </div>
             </div>';
 }
+if ($notifs->type == 'Reaction') {
+
+  if ($notifs->action == 'Like') {
+  $notif = DB::table('notifications')
+              ->join('users','notifications.sender_id','=','users.id')
+              ->join('posts','notifications.post_id','=','posts.id')
+              ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
+              ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id, 'notifications.action' =>"Like" ] )
+              ->where('notifications.sender_id', "!=", Auth::user()->id)
+              ->orderBy('notifications.id','DESC')
+              ->first();
+
+
+        $output .='
+        <div class="post-content border p-3">
+          <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+          <div class="post-content-body">
+            <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> Liked your post <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+          </div>
+        </div>';
+
+      }
+      if ($notifs->action == 'Love') {
+        $notif = DB::table('notifications')
+                    ->join('users','notifications.sender_id','=','users.id')
+                    ->join('posts','notifications.post_id','=','posts.id')
+                    ->select('notifications.*', 'posts.title', 'posts.slug', 'users.username','users.email','users.image')
+                    ->where(['notifications.user_id' => Auth::user()->id, 'notifications.post_id' => $notifs->post_id, 'notifications.action' =>"Love" ] )
+                    ->where('notifications.sender_id', "!=", Auth::user()->id)
+                    ->orderBy('notifications.id','DESC')
+                    ->first();
+            $output .='
+            <div class="post-content border p-3">
+              <img src="'.$notif->image.'" class="img-fluid img-thumb" alt="user" />
+              <div class="post-content-body">
+                <a class="m-0 font-weight-bold" href="'.secure_url('/').'/'.$notif->username.'">'.$notif->username.'</a> Love your post <a href="'.secure_url('/').'/'.Auth::user()->username.'/post/'.$notif->slug.'" class="font-weight-bold">'.$notif->title.'</a>
+              </div>
+            </div>';
+
+          }
+}
+
 //dd($output);
 }
 
@@ -549,19 +642,20 @@ class pageController extends Controller
           </div>
         </div>';
     }
-
-    $notif = DB::table('notifications')
+    $count = DB::table('notifications')
                 ->where(['user_id' => Auth::user()->id, 'status' => 0 ] )
                 ->where('sender_id', "!=", Auth::user()->id)
-                ->get();
+                ->count();
 
-    $count = count($notif);
+  //  $count = count($notif);
 
+  //dd($output);
     //dd($count);
     $data = array(
        'notification' => $output,
        'unseen_notification'  => $count
     );
+
  return response()->json($data);
 
     }
@@ -592,7 +686,7 @@ class pageController extends Controller
         }
         $createdAt = Carbon::parse($post->created_at);
         $content['title'] = $post->title;
-        $content['body']  = $this->trim_words($postContent, 100);
+        $content['body']  = $this->trim_words($postContent, 500);
         $content['tags']  = $post->tags;
         $content['slug']  = $this->clean($post->slug);
         $content['image'] = $first_img;
@@ -606,10 +700,111 @@ class pageController extends Controller
       return view('filtered-posts')->with(['posts'=>$allPost]);
 
       }
+
     }elseif($method =="Popular"){
 
+      $posts = DB::table('posts')
+                ->join('users','posts.user_id','=','users.id')
+                ->join('notifications','posts.id','=','notifications.post_id')
+                ->select('posts.*','users.image','users.username',DB::raw('count(notifications.comment) as total'))
+                ->groupBy('posts.id')
+                ->orderBy('total', 'DESC')
+                ->get();
+        if(!empty($posts)){
 
+          $allPost = [];
+        foreach($posts as $post){
+          $parsedown  = new Parsedown();
+          $postContent = $parsedown->text($post->content);
+          preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+          $first_img = "";
+          if (isset($matches[1])) {
+              // there are images
+              $first_img = $matches[1];
+              // strip all images from the text
+              $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+          }
+          $createdAt = Carbon::parse($post->created_at);
+          $content['title'] = $post->title;
+          $content['body']  = $this->trim_words($postContent, 500);
+          $content['tags']  = $post->tags;
+          $content['slug']  = $this->clean($post->slug);
+          $content['image'] = $first_img;
+          $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+          $content['id'] = $post->id;
+          $content['username'] = $post->username;
+          $content['user_img'] = $post->image;
 
+          array_push($allPost,$content);
+        }
+        return view('filtered-posts')->with(['posts'=>$allPost]);
+
+        }
     }
   }
+
+
+  public function explorePage(){
+    $interests = DB::table('interests')->get();
+
+    return view('explore')->with('interests',$interests);
+  }
+
+  public function interest($interest){
+    $posts = DB::table('posts')
+             ->join('users','posts.user_id','=','users.id')
+             ->select('posts.*','users.image','users.username')
+             ->where('tags','!=',NULL)->orderBy('id','DESC')->get();
+    $interestsArray = [];
+    $interestPosts=[];
+    foreach($posts as $post) {
+       $tags = explode(',',$post->tags);
+       $tags = array_filter(array_map('trim',$tags));
+       $tags = array_filter(array_map('strtolower',$tags));
+       if(in_array(strtolower($interest), $tags)) {
+
+          $parsedown  = new Parsedown();
+          $postContent = $parsedown->text($post->content);
+          preg_match('/<img[^>]+src="((\/|\w|-)+\.[a-z]+)"[^>]*\>/i', $postContent, $matches);
+          $first_img = "";
+          if (isset($matches[1])) {
+              // there are images
+              $first_img = $matches[1];
+              // strip all images from the text
+              $postContent = preg_replace("/<img[^>]+\>/i", " ", $postContent);
+          }
+          $createdAt = Carbon::parse($post->created_at);
+          $content['title'] = $post->title;
+          $content['body']  = $this->trim_words($postContent, 500);
+          $content['tags']  = $post->tags;
+          $content['slug']  = $this->clean($post->slug);
+          $content['image'] = $first_img;
+          $content['date']  =  $createdAt->format('M jS, Y h:i A');;
+          $content['id'] = $post->id;
+          $content['username'] = $post->username;
+          $content['user_img'] = $post->image;
+
+          array_push($interestPosts,$content);
+
+       }
+    }
+    return view('interest-posts')->with(['posts'=>$interestPosts,'interest'=>strtoupper($interest)]);
+  }
+
+  public function postCategories($category) {
+    $categories = explode(',',$category);
+    $posts = DB::table('posts')
+             ->join('users','posts.user_id','=','users.id')
+             ->select('posts.*','users.image','users.username')
+
+             ->where('tags','!=',NULL)->where('action','publish')->orWhere('action',NULL)->orderBy('id','DESC')->get();
+
+    $users = DB::table('posts')
+            ->join('users','posts.user_id','=','users.id')
+            ->select('posts.*','users.image','users.username')
+            ->where('tags','!=',NULL)->where('action','publish')->orWhere('action',NULL)->orderBy('id','DESC')->get();
+
+    return view('category')->with(['categories'=>array_reverse($categories),'posts'=>$posts,'pageController'=>new pageController,'users'=>$users]);
+  }
+
 }

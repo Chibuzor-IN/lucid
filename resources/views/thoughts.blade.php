@@ -3,7 +3,7 @@
   @if(Auth::user() && Auth::user()->username == $user->username)
    Thoughts - {{ $user->username }} - Lucid
   @else
-  {{ $user->name }} (@ {{ $user->username }}) - Lucid
+  {{ $user->name }} ({{ '@'.$user->username }}) - Lucid
   @endif
 @endsection
 @php

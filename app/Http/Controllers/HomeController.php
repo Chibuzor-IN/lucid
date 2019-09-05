@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Validator;
 use DB;
 use Storage;
 use Parsedown;
+use Image;
 class HomeController extends Controller
 {
     /**
@@ -81,10 +83,10 @@ foreach ($get as $key => $value) {
 }
     public function fix()
     {
-      echo "Initiating Fix";
-     $fix = new \Lucid\Core\Subscribe(Auth::user()->username);
+      $dir = storage_path('app/markessien/');
 
-      //$fix = $fix->fix();
+      return Storage::disk()->files($dir);
+
     }
     public function timeline($username)
     {
@@ -198,6 +200,7 @@ foreach ($get as $key => $value) {
         $title = isset($request->title) ? $request->title : '';
         $content = $request->postVal;
         $tags = $request->tags;
+        $action = $request->action;
 
 
           $initial_images = array_filter($request->all(), function ($key) {
@@ -208,15 +211,19 @@ foreach ($get as $key => $value) {
         foreach ($initial_images as $key => $value) {
             $newKey = preg_replace('/_/', '.', $key);
             $images[$newKey] = $value;
+            // Log::debug($value);
+
         }
         $post = new \Lucid\Core\Document($username);
-        $createPost = $post->createPost($title, $content, $tags, $images,$username);
+        $createPostAction = $post->createPost($title, $content, $tags, $images,$username,$action);
 
       //  dd(  $createPost);
-        if($createPost){
+        if($createPostAction == "publish" ){
           return response()->json(["error" => false, "action"=>"publish", "message" => "Post published successfully"],200);
-        }else{
-          return response()->json(["error" => true, "action"=>"publish", "message" => "Fail while publishing, please try again"]);
+        }else if ($createPostAction == "draft") {
+          return response()->json(["error" => false, "action"=>"draft", "message" => "Post published successfully"],200);
+        }else if($createPostAction == false){
+          return response()->json(["error" => true, "action"=>"publish", "message" => "Failed while processing your request, please try again"]);
         }
     }
 
@@ -277,15 +284,27 @@ foreach ($get as $key => $value) {
       $newname = $request->name;
       $user_id = $request->user_id;
       $email = $request->email;
-      $username= $request->username;
+      $username= Str::slug($request->username, '_');
       $bio = $request->bio;
       $FolderName = storage_path('app/'.Auth::user()->id);
 
       if(!is_null($request->file('profileimage')) && $request->file('profileimage') !== ""){
-          $url = Auth::user()->id."/images/";
 
-         $path = Storage::disk('public')->put($url, $request->file('profileimage'));
-         $fullPath = '/storage/'.$path;
+        $filenamewithextension = $request->file('profileimage')->getClientOriginalName();
+
+        //get filename without extension
+        $filename = pathinfo($filenamewithextension, PATHINFO_FILENAME);
+
+        //get file extension
+        $extension = $request->file('profileimage')->getClientOriginalExtension();
+
+        $image = $request->file('profileimage');
+        $fullPath = $this->store($image, $filenamewithextension,$filename,$extension);
+
+        //  $url = Auth::user()->id."/images/";
+
+//         $path = Storage::disk('public')->put($url, $request->file('profileimage'));
+  //       $fullPath = '/storage/'.$path;
 
          $updated =   DB::transaction(function ()
    use ($oldname,$newname,$fullPath,$FolderName,$user_id,$email,$username,$bio) {
@@ -293,12 +312,10 @@ foreach ($get as $key => $value) {
   $updated= DB::table('users')->where('id',$user_id)
     ->update(['name'=>$newname,'username'=>$username,'email'=>$email,'image'=>$fullPath,'short_bio'=>$bio]);
 
-DB::table('ext_rsses')->where('title',$oldname)
+DB::table('extfeeds')->where('site',$oldname)
     ->update([
-      'title'=>$newname,
-      'url'=> $FolderName."/rss/rss.xml",
-      'link'=> $FolderName."/rss/rss.xml",
-      'image' => $fullPath
+      'site'=>$newname,
+      'site_image' => $fullPath
     ]);
 
 return true;
@@ -307,7 +324,7 @@ return true;
 
         if($updated) {
 
-          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$request->username], 200);
+          return response()->json(['success'=>"Your changes has been saved successfully",'img_path'=>$fullPath,'renamedUserContentFolderName'=>$username], 200);
         }
       } else {
         $fullPath = Auth::user()->image;
@@ -329,11 +346,68 @@ return true;
 
 });
                                       if($updated){
-                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$request->username], 200);
+                                        return response()->json(['success'=>"Your changes has been saved successfully",'renamedUserContentFolderName'=>$username], 200);
                                       }
       }
 
     }
+
+    public function store($image,$filenamewithextension,$filename,$extension)
+{
+
+
+        //filename to store
+        $filenametostore = $filename.'_'.time().'.'.$extension;
+
+        //small thumbnail name
+        $smallthumbnail = $filename.'_small_'.time().'.'.$extension;
+
+        //medium thumbnail name
+        $mediumthumbnail = $filename.'_medium_'.time().'.'.$extension;
+
+        //large thumbnail name
+        $largethumbnail = $filename.'_large_'.time().'.'.$extension;
+
+        //Upload File
+        $image->storeAs('public/'.Auth::user()->id.'/images/', $filenametostore);
+        $image->storeAs('public/'.Auth::user()->id.'/images/thumbnail', $smallthumbnail);
+        $image->storeAs('public/'.Auth::user()->id.'/images/thumbnail', $mediumthumbnail);
+        $image->storeAs('public/'.Auth::user()->id.'/images/thumbnail', $largethumbnail);
+
+        //create small thumbnail
+        $smallthumbnailpath = public_path('storage/'.Auth::user()->id.'/images/thumbnail/'.$smallthumbnail);
+        $this->createThumbnail($smallthumbnailpath, 150, 93);
+
+        //create medium thumbnail
+        $mediumthumbnailpath = public_path('storage/'.Auth::user()->id.'/images/thumbnail/'.$mediumthumbnail);
+        $this->createThumbnail($mediumthumbnailpath, 300, 185);
+
+        //create large thumbnail
+        $largethumbnailpath = public_path('storage/'.Auth::user()->id.'/images/thumbnail/'.$largethumbnail);
+        $this->createThumbnail($largethumbnailpath, 550, 340);
+
+        $imagePath ='/storage/'.Auth::user()->id.'/images/thumbnail/'.$smallthumbnail;
+        return $imagePath;
+
+}
+        /**
+        * Create a thumbnail of specified size
+        *
+        * @param string $path path of thumbnail
+        * @param int $width
+        * @param int $height
+        */
+        public function createThumbnail($path, $width, $height)
+        {
+        $img = Image::make($path)->resize($width, $height, function ($constraint) {
+        $constraint->aspectRatio();
+        });
+        $img->save($path);
+
+        //$img = Image::make($path)->resize($width, $height)->save($path);
+        }
+
+
 
     public function updateContactDetails(Request $request){
         $validator=Validator::make($request->all(),[
@@ -504,12 +578,14 @@ print_r($updateFeeds);
 
     }
 
+
     public function editPost(Request $request, $username) {
 
         $title = isset($request->title) ? $request->title : '';
         $content = $request->postVal;
         $tags = $request->tags;
         $post_id = $request->post_id;
+        $action = $request->action;
 
 
           $initial_images = array_filter($request->all(), function ($key) {
@@ -522,13 +598,25 @@ print_r($updateFeeds);
             $images[$newKey] = $value;
         }
         $post = new \Lucid\Core\Document($username);
-        $updatePost = $post->saveUpdatedPost($title, $content, $tags, $images,$username,$post_id);
+        $updatePost = $post->saveUpdatedPost($title, $content, $tags, $images,$username,$post_id,$action);
 
         if($updatePost){
           return response()->json(["error" => false, "action"=>"update", "message" => "Post Updated successfully"],200);
         }else{
           return response()->json(["error" => true, "action"=>"error", "message" => "Fail while publishing, please try again"]);
         }
+    }
+
+    public function updatePostStatus($username,$post_id,$action){
+      $update = DB::table('posts')->where('id',$post_id)->update([
+        'action'=>$action,
+      ]);
+
+      if($update) {
+        return response()->json(['success'=>true],200);
+      }else{
+        return response()->json(['success'=>false],200);
+      }
     }
 
 }

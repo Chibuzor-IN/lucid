@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddStatusIdToPostsTable extends Migration
+class AddPostIdToPostsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class AddStatusIdToPostsTable extends Migration
     {
         Schema::table('posts', function (Blueprint $table) {
             //
-            $table->integer('status_id')->nullable();
+              $table->integer('post_id')->nullable();
         });
     }
 
@@ -27,7 +27,8 @@ class AddStatusIdToPostsTable extends Migration
     public function down()
     {
         Schema::table('posts', function (Blueprint $table) {
-          $table->dropColumn('status_id');
+            //
+            $table->dropColumn('post_id');
         });
     }
 }

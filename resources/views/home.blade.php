@@ -1,7 +1,16 @@
 @extends('layouts.lucid')
-@section('title')
-  {{ $user->name }} - Lucid
-@endsection
+@section('title') {{ $user->name }} - Lucid @endsection
+
+
+@section('img')@if($user->image){{ secure_url('/').$user->image}} @else {{ secure_asset('img/logo.png')}} @endif @endsection
+
+@section('desc'){{ \Illuminate\Support\Str::limit($user->short_bio, 300) }} @endsection
+
+@section('tags') @endsection
+
+@section('url'){{ secure_url('/').'/'.$user->name }}@endsection
+
+
 @php
 $location= 'home';
 @endphp

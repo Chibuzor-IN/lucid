@@ -421,3 +421,7 @@ ul.footer-links li a {
  .cursor-pointer{
      cursor: pointer;
  }
+
+.lh-1 {
+    line-height: 1;
+}
