@@ -36,7 +36,7 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://unpkg.com/ionicons@4.5.9-1/dist/css/ionicons.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/luci-logo.png') }}">
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/lucid-logo.svg') }}">
   <link rel="stylesheet" href="{{ secure_asset('css/main-style.css') }}" />
   <title>Lucid - the ultimate lightweight content platform</title>
 </head>
@@ -45,7 +45,7 @@
 <header class="header">
     <nav class="navbar sticky-top navbar-expand-lg">
         <div class="container">
-        <a href="/" class="navbar-brand"><img alt="Lucid" src="{{ secure_asset('img/logo.png') }}" class="img-fluid" /></a>
+        <a href="/" class="navbar-brand"><img alt="Lucid" src="{{ secure_asset('img/logo.svg') }}" class="img-fluid" /></a>
         <button type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
             class="navbar-toggler navbar-toggler-right collapsed">
@@ -86,7 +86,7 @@
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
-        <img src="{{ secure_asset('img/logo.png') }}" alt="Lucid" class="img-fluid pb-3" />
+        <img src="{{ secure_asset('img/logo.svg') }}" alt="Lucid" class="img-fluid pb-3" />
       </div>
       <div class="col-lg-12 text-center">
         <p>&copy; 2019 Lucid. All rights reserved.</p>

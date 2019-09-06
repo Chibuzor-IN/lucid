@@ -12,7 +12,7 @@ Timeline - {{ $user->username }} - Lucid
 @if($user->image)
 {{$user->image}}
 @else
-{{ secure_asset('img/logo.png') }}
+{{ secure_asset('img/logo.svg') }}
 @endif
 @endsection
 

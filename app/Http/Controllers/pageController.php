@@ -492,7 +492,7 @@ public function Feeds($username)
             ->select('notifications.*','users.username','users.email','users.image')
             ->where('notifications.post_id',$post_id)
             ->where('notifications.parent_comment_id','!=',null)
-            ->where('notifications.action','Commented')
+            ->where('notifications.action','Replied')
             ->orderBy('notifications.id','DESC')
             ->get();
           //  dd(  $replies);

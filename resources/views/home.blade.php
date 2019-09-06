@@ -2,7 +2,7 @@
 @section('title') {{ $user->name }} - Lucid @endsection
 
 
-@section('img')@if($user->image){{ secure_url('/').$user->image}} @else {{ secure_asset('img/logo.png')}} @endif @endsection
+@section('img')@if($user->image){{ secure_url('/').$user->image}} @else {{ secure_asset('img/logo.svg')}} @endif @endsection
 
 @section('desc'){{ \Illuminate\Support\Str::limit($user->short_bio, 300) }} @endsection
 

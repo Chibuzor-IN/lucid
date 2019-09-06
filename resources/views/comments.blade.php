@@ -27,9 +27,9 @@
 </div>
 
 @forelse($replies as $reply)
-
+    
 @if($reply->parent_comment_id == $comment->id)
-
+ 
 <div class="ml-5 pl-4 d-flex align-items-center mb-1" id="reply">
     <img src="{{ $reply->image }}" class="img-fluid mr-2" style="border-radius:50%;object-fit:cover;" alt="user" width="35" height="35"/>
     <div class="ml-1">

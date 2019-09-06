@@ -38,13 +38,13 @@
                 @endphp
                 @if(!empty($likes))
                 <span id="like{{$feeds['id']}}">
-                <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='icon ion-md-thumbs-up text-warning' style='font-size: 1.2em;'></i>
+                <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='fas fa-thumbs-up text-warning' style='font-size: 1.2em;'></i>
                 <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
                 </button></span>
                 @else
                 <span id="like{{$feeds['id']}}">
                   <button type="button" title="like this Post" onclick='like(1,{{ $feeds["id"] }})' class="btn">
-                    <i class="icon ion-md-thumbs-up" style="font-size: 1.2em;"></i>
+                    <i class="fas fa-thumbs-up text-secondary" style="font-size: 1.2em;"></i>
                     <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
                   </button>
                 </span>
@@ -58,13 +58,13 @@
                 @if(!empty($love))
                 <span id="love{{$feeds['id']}}">
                 <button type='button' title='unlove this Post' onclick='love(0,{{$feeds["id"]}})' class='btn'>
-                  <i class="icon ion-md-heart text-danger" style="font-size: 1.2em;"></i>
+                  <i class="fas fa-heart text-danger" style="font-size: 1.2em;"></i>
                 <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
                 </button></span>
                 @else
                 <span id="love{{$feeds['id']}}">
                   <button type="button" title="love this Post" onclick='love(1,{{ $feeds["id"] }})' class="btn">
-                    <i class="icon ion-md-heart" style="font-size: 1.2em;"></i>
+                    <i class="fas fa-heart text-secondary" style="font-size: 1.2em;"></i>
                     <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
                   </button>
                 </span>
@@ -74,7 +74,7 @@
                 @endphp
                 <a href="{{secure_url('/')}}/{{$feeds['username'].$feeds['link']}}#comment">
                   <button type="button"  class="btn">
-                  <i class="icon ion-md-text text-primary" style="font-size: 1.2em;"></i>
+                  <i class="fas fa-comments text-secondary" style="font-size: 1.2em;"></i>
                   <sub id="count{{$feeds['id']}}">{{ $ccount }}</sub>
                 </button>
                 </a>

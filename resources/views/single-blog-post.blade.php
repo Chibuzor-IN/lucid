@@ -10,10 +10,12 @@
 @if($post['image'])
 @section('img'){{ $post['image'] }} @endsection
 @else
-@section('img'){{ secure_asset('img/logo.png') }} @endsection
+@section('img'){{ secure_asset('img/logo.svg') }} @endsection
 @endif
-
-@section('desc'){{ \Illuminate\Support\Str::limit($post['body'], 300) }} @endsection
+@php
+$postdes = strip_tags($post['body']);
+@endphp
+@section('desc'){{ \Illuminate\Support\Str::limit($postdes, 300) }} @endsection
 
 @section('tags'){{ $post['tags'] }} @endsection
 
@@ -67,22 +69,34 @@ $location= 'singlePost';
         </div>
     </div>
 </div>
-<div class="d-flex">
-    <div class="mt-2 mr-3">
-        <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false"><i class="icon ion-logo-twitter h2 mx-2"></i></a>
-        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    </div>
+<div class="containter-fluid d-flex justify-content-between">
+    <div class="d-flex">
+        <div class="mt-2 mr-3">
+            <a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false"><i class="icon ion-logo-twitter h2 mx-2"></i></a>
+            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
 
-    <div class="mt-2 mr-3">
-        <iframe src="https://www.facebook.com/plugins/share_button.php?href={!! URL::current() !!}&layout=button&size=small&appId=173297093603387&width=59&height=20" width="59" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
-    </div>
+        <div class="mt-2 mr-3">
+            <iframe src="https://www.facebook.com/plugins/share_button.php?href={!! URL::current() !!}&layout=button&size=small&appId=173297093603387&width=59&height=20" width="59" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe>
+        </div>
 
-    <div class="mt-1 mr-3">
-        <script src="https://platform.linkedin.com/in.js" type="text/javascript">
-            lang: en_US
-        </script>
-        <script type="IN/Share" data-url="https://www.linkedin.com"></script>
+        <div class="mt-1 mr-3">
+            <script src="https://platform.linkedin.com/in.js" type="text/javascript">
+                lang: en_US
+            </script>
+            <script type="IN/Share" data-url="https://www.linkedin.com"></script>
+        </div>
     </div>
+    <div>
+            <span id="">
+                <button type='button' title='like this Post' onclick='' class='btn'><i class='fas fa-thumbs-up text-secondary' style='font-size: 1.2em;'></i>
+                    <sub id="">1</sub>
+                </button></span>
+            <span id="">
+                <button type='button' title='like this Post' onclick='' class='btn'><i class='fas fa-heart text-secondary' style='font-size: 1.2em;'></i>
+                    <sub id="">1</sub>
+                </button></span>
+        </div>
 </div>
 <hr style="padding-bottom:20px">
 <div class="">
