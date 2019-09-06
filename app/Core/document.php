@@ -1137,8 +1137,9 @@ $user = Auth::user();
     public function getPublishedPosts(){
 
       $user =   DB::table('users')->where('username', $this->user)->first();
-
-          $posts = DB::table('posts')->where('user_id',$user->id)->where('action','publish')->orWhere('action',NULL)->orderBy('id','DESC')->get();
+      $matchThese = [['user_id',$user->id],['action','publish']];
+      $orthis = [['user_id',$user->id],['action',NULL]];
+          $posts = DB::table('posts')->where($matchThese)->orWhere($orthis)->orderBy('id','DESC')->get();
           if(!empty($posts)){
 
             $allPost = [];

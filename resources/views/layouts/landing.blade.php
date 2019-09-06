@@ -30,6 +30,8 @@
   <meta property="og:title" content="Lucid" />
   <meta property="og:description"
     content="Welcome to the most private content sharing platform We built Lucid on the premise that ownership and privacy is about respect and that it is your right." />
+  <meta name="msvalidate.01" content="0D04E9AD3D60609FF1D1A5D5F3705A04" />
+  <meta name="google-site-verification" content="zWGhooabnrUzUwys6O7e0GEndWQGqN26crtsYinFxc0" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://unpkg.com/ionicons@4.5.9-1/dist/css/ionicons.min.css" rel="stylesheet" />

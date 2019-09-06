@@ -45,13 +45,10 @@
         <div class="col-xs-12 col-md-4 bg-light h-100 mt-4 mb-3 mt-md-0 mb-md-0">
           <div class="form-group border-bottom mt-2 pb-3">
             <label for="country" class="font-weight-bold">
-              <h5>Country</h5>
+              <h5>Sort By :</h5>
             </label>
             <select id="country" class="form-control w-100">
-              <option selected>Nigeria</option>
-              <option>Canada</option>
-              <option>USA</option>
-              <option>UK</option>
+              <option selected>Recent</option>
             </select>
           </div>
           <div class="form-group border-bottom mt-3 pb-2">

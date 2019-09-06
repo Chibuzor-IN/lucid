@@ -37,9 +37,9 @@
             @endforeach
 
 
-              <a href="" class="mx-4 my-3"><i class="icon ion-md-arrow-dropright-circle text-secondary" style="font-size: 30px;"></i></a>
+              <!-- <a href="" class="mx-4 my-3"><i class="icon ion-md-arrow-dropright-circle text-secondary" style="font-size: 30px;"></i></a> -->
             </div>
-            <h5 class="mt-4 mb-3" style="text-transform:capitalize;">Most popular {{ $category }} posts</h5>
+            <h5 class="mt-4 mb-3" style="text-transform:capitalize;">Most recent {{ $category }} posts</h5>
             @php
             $k = 0;
             foreach($posts as $post) {
@@ -87,7 +87,7 @@
               }
             }
             @endphp
-            <a href="" class="text-secondary font-weight-bold pb-3">Show more ></a>
+           
           </div>
           <!-- End Technology section -->
 @empty

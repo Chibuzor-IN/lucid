@@ -785,3 +785,8 @@ function deletePost(id){
                 Fitness
               </label>
             </div> -->
+
+          <option>Canada</option>
+              <option>USA</option>
+              <option>UK</option>
+               <a href="" class="text-secondary font-weight-bold pb-3">Show more ></a>
