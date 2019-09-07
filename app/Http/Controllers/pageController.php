@@ -839,7 +839,7 @@ $content ='';
       $content .='<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">';
   foreach ($feeds as $key => $value) {
-    $user = DB::table('users')->where('id', $value->id)->first();
+    $user = DB::table('users')->where('id', $value->user_id)->first();
     $content .='<url>
     <loc>'.url('/').'/'.$user->username.'/'.$value->slug.'</loc>
     <news:news>
@@ -867,7 +867,7 @@ $content ='';
 <lastmod>'.now().'</lastmod>
 </sitemap>
 <sitemap>
-<loc>'.url('/').'/sitemap_users.xml</loc>
+<loc>'.url('/').'/sitemap_feeds.xml</loc>
 <lastmod>'.now().'</lastmod>
 </sitemap>
 <sitemap>

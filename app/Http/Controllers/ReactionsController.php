@@ -28,6 +28,9 @@ class ReactionsController extends Controller
   $user = Auth::user();
 switch ($request->act){
     case "1":
+if (DB::table('notifications')->where(['post_id'=>$request->id,'sender_id'=> $user['id'], 'action'=> "Like"])->exists()) {
+
+}else {
 
     $like = DB::table('notifications')->insert([
       'post_id'=>$request->id,
@@ -40,6 +43,7 @@ switch ($request->act){
       'type'=>"Reaction",
     ]);
 
+  }
     break;
 
     case "0":
@@ -94,7 +98,9 @@ $post = DB::table('posts')->where('id', $request->id)->first();
 $user = Auth::user();
 switch ($request->act){
   case "1":
+  if (DB::table('notifications')->where(['post_id'=>$request->id,'sender_id'=> $user['id'], 'action'=> "Love"])->exists()) {
 
+  }else {
   $love = DB::table('notifications')->insert([
     'post_id'=>$request->id,
     'parent_comment_id'=> null,
@@ -105,7 +111,7 @@ switch ($request->act){
     'action'=>"Love",
     'type'=>"Reaction",
   ]);
-
+}
   break;
 
   case "0":
