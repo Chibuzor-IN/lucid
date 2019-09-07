@@ -806,5 +806,93 @@ if ($notifs->type == 'Reaction') {
 
     return view('category')->with(['categories'=>array_reverse($categories),'posts'=>$posts,'pageController'=>new pageController,'users'=>$users]);
   }
+  public function sitemapUsers()
+  {
+$users = DB::table('users')->get();
+$content ='';
 
+    //OK. Everything is done. Now generate the feed.
+  $content .='<?xml version="1.0" encoding="UTF-8"?>';
+  $content .='<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    foreach ($users as $key => $value) {
+      $content .='<url>
+      <loc>'.url('/').'/'.$value->username.'</loc>
+      <lastmod>'.$value->updated_at.'</lastmod></url>';
+    };
+  $content .='
+  </urlset>' ;
+
+    return response($content, 200)
+                ->header('Content-Type', 'text/xml');
+  }
+
+
+
+
+
+  public function sitemapFeeds($value='')
+  {
+    $feeds = DB::table('posts')->get();
+    $content ='';
+
+        //OK. Everything is done. Now generate the feed.
+      $content .='<?xml version="1.0" encoding="UTF-8"?>
+  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">';
+  foreach ($feeds as $key => $value) {
+    $user = DB::table('users')->where('id', $value->id)->first();
+    $content .='<url>
+    <loc>'.url('/').'/'.$user->username.'/'.$value->slug.'</loc>
+    <news:news>
+    <news:publication>
+    <news:name>'.\Illuminate\Support\Str::title($this->clean($user->name)).'&apos;s Blog</news:name>
+    <news:language>en</news:language>
+    </news:publication>
+    <news:publication_date>'.$value->created_at.'</news:publication_date>
+    <news:title>'.$value->title.'</news:title>
+    </news:news></url>';
+  };
+  $content .='</urlset>' ;
+
+
+      return response($content, 200)
+                  ->header('Content-Type', 'text/xml');
+  }
+  public function sitemaps()
+  {
+    $content ='';
+    $content .='<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemap>
+<loc>'.url('/').'/sitemap_users.xml</loc>
+<lastmod>'.now().'</lastmod>
+</sitemap>
+<sitemap>
+<loc>'.url('/').'/sitemap_users.xml</loc>
+<lastmod>'.now().'</lastmod>
+</sitemap>
+<sitemap>
+<loc>'.url('/').'/sitemap.xml</loc>
+<lastmod>'.now().'</lastmod>
+</sitemap>
+</sitemapindex>';
+return response($content, 200)
+            ->header('Content-Type', 'text/xml');
+  }
+  public function sitemap()
+  {
+    $content ='';
+    $content .='<?xml version="1.0" encoding="UTF-8"?>
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <url>
+        <loc>'.url('/').'</loc>
+        <lastmod>'.now().'</lastmod>
+      </url>
+      <url>
+        <loc>'.url('/').'/explore</loc>
+        <lastmod>'.now().'</lastmod>
+      </url>
+    </urlset>';
+return response($content, 200)
+            ->header('Content-Type', 'text/xml');
+  }
 }

@@ -9,7 +9,8 @@
     <img src="{{ $comment->image }}" class="" style="border-radius:50%;object-fit:cover;" alt="user" width="55" height="56"/>
     <div class="post-content-body">
     <p class="font-weight-bold m-0">
-      <a href="{{secure_url('/').'/'.$comment->username }}"> {{ '@'.$comment->username  }}</a> - <small class="text-muted">@php
+    
+      <a href="@if($isLocal) {{ url('/').'/'.$comment->username }} @else {{ secure_url('/').'/'.$comment->username }} @endif"> {{ '@'.$comment->username  }}</a> - <small class="text-muted">@php
            $created_at = $carbon->parse($comment->created_at);
 
            echo $created_at->format('M jS, Y h:i A');
@@ -34,7 +35,7 @@
     <img src="{{ $reply->image }}" class="img-fluid mr-2" style="border-radius:50%;object-fit:cover;" alt="user" width="35" height="35"/>
     <div class="ml-1">
     <p class="font-weight-bold m-0" style="font-size: 13px;">
-      <a href="{{secure_url('/').'/'.$reply->username }}">  {{ '@'.$reply->username  }} </a>-
+      <a href="@if($isLocal) {{ url('/').'/'.$reply->username }} @else {{secure_url('/').'/'.$reply->username }} @endif">  {{ '@'.$reply->username  }} </a>-
         <small class="text-muted">@php
         $created_at = $carbon->parse($comment->created_at);
 

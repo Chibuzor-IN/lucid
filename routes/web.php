@@ -54,6 +54,11 @@ Route::post('save-subscription','pageController@saveSubscriptionEmail');
 Route::get('/category/{category}','pageController@postCategories');
 Route::get('/filter/{method}','pageController@filterPost');
 
+Route::get('/sitemap_users.xml','pageController@sitemapUsers');
+Route::get('/sitemap_feeds.xml','pageController@sitemapFeeds');
+Route::get('/sitemaps.xml','pageController@sitemaps');
+Route::get('/sitemap.xml','pageController@sitemap');
+
 
 Route::get('login/{provider}', 'Auth\LoginController@redirectToProvider');
 Route::get('login/{provider}/callback', 'Auth\LoginController@handleProviderCallback');
@@ -80,6 +85,7 @@ Route::prefix('{username}')->group(function () {
     Route::get('/like','ReactionsController@like');
     Route::get('/love','ReactionsController@love');
     Route::get('/feeds','pageController@Feeds');
+    Route::get('/update-post-status/{post_id}/{action}','HomeController@updatePostStatus');
 
 
 
@@ -98,7 +104,6 @@ Route::prefix('{username}')->group(function () {
     Route::post('/notif','pageController@notification');
     Route::post('/edit-post','HomeController@editPost');
 
-    Route::get('/update-post-status/{post_id}/{action}','HomeController@updatePostStatus');
 
 
 });

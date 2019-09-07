@@ -134,7 +134,11 @@ $location= 'settings';
 <!-- convert to markdown script ends -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+@if($isLocal)
 <script src="{{ secure_asset('js/settings.js') }}"></script>
+@else
+<script src="{{ asset('js/settings.js') }}"></script>
+@endif
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 

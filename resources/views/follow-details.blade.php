@@ -285,7 +285,7 @@ $location= 'follow';
     <div class="post-content border p-3 my-2">
       <img src="{{$follow['img']}}" class="img-fluid img-thumb" alt="user" />
       <div class="post-content-body">
-        <p class="m-0 font-weight-bold"><a href="{{secure_url('/')}}/{{$follow['username']}}/">{{$follow['name']}}</a></p>
+        <p class="m-0 font-weight-bold"><a href="@if($isLocal) {{ url('/')}}/{{$follow['username']}}/ @else {{secure_url('/')}}/{{$follow['username']}}/ @endif">{{$follow['name']}}</a></p>
         <p class="mb-2">{{$follow['desc']}}</p>
 
 @php
@@ -304,7 +304,7 @@ $location= 'follow';
               <br>
               <h4 class="text-main">Unfollow  {{$follow['name']}}</h4>
               <p class="small"><em>Are you sure you want to Unfollow {{$follow['name']}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
-              <form method="POST" action="{{secure_url('/')}}/{{ $user->username}}/unfollow">
+              <form method="POST" action="@if($isLocal) {{ url('/')}} @else {{secure_url('/')}}@endif/{{ $user->username}}/unfollow">
                 @csrf
                 <input type="hidden" name="rss" value="{{$follow['name']}}">
                 <button type="submit" class="btn btn-primary">UnFollow</button>
@@ -332,7 +332,7 @@ $location= 'follow';
                 <br>
                 <h4 class="text-main">Follow {{$follow['name']}}</h4>
                 <p class="small"><em>Do you have or would love to have Lucid installed on your domain?<br /> Click the button below to follow me</em></p>
-                <form method="POST" action="{{secure_url('/')}}/{{ $user->username}}/addrss">
+                <form method="POST" action="@if($isLocal) {{ url('/')}} @else {{secure_url('/')}}@endif/{{ $user->username}}/addrss">
                   @csrf
                   <input type="hidden" name="rss" value="{{$follow['username']}}">
                   <button type="submit" class="btn btn-primary">Follow me on Lucid</button>
@@ -364,7 +364,7 @@ $location= 'follow';
     <div class="post-content border p-3 my-2">
       <img src="{{$follower['img']}}" class="img-fluid img-thumb" alt="user" />
       <div class="post-content-body">
-        <a href="{{secure_url('/')}}/{{$follower['username']}}/">
+        <a href="@if($isLocal) {{ url('/')}} @else {{secure_url('/')}}@endif/{{$follower['username']}}/">
           <p class="m-0 font-weight-bold">{{$follower['name']}}</p>
         </a>
         <p class="mb-2">{{$follower['desc']}}</p>
@@ -386,7 +386,7 @@ $location= 'follow';
                       <br>
                       <h4 class="text-main">Unfollow  {{$follower['name']}}</h4>
                       <p class="small"><em>Are you sure you want to Unfollow {{$follower['name']}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
-                      <form method="POST" action="{{secure_url('/')}}/{{ $user->username}}/unfollow">
+                      <form method="POST" action="@if($isLocal) {{ url('/')}} @else {{secure_url('/')}}@endif/{{ $user->username}}/unfollow">
                         @csrf
                         <input type="hidden" name="rss" value="{{$follower['username']}}">
                         <button type="submit" class="btn btn-primary">UnFollow</button>
@@ -414,7 +414,7 @@ $location= 'follow';
                           <br>
                           <h4 class="text-main">Follow {{$follower['name']}}</h4>
                           <p class="small"><em>Do you have or would love to have Lucid installed on your domain?<br /> Click the button below to follow me</em></p>
-                          <form method="POST" action="{{secure_url('/')}}/{{ $user->username}}/addrss">
+                          <form method="POST" action="@if($isLocal) {{ url('/')}} @else {{secure_url('/')}}@endif/{{ $user->username}}/addrss">
                             @csrf
                             <input type="hidden" name="rss" value="{{$follower['username']}}">
                             <button type="submit" class="btn btn-primary">Follow me on Lucid</button>

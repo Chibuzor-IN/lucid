@@ -16,7 +16,7 @@
           <img src="{{$feeds['site_image']}}" class="timeline-img" alt="{{$feeds['site']}}" />
           <div class="post-content-body mb-0">
             <span class="text-muted">{{$feeds['tags']}}</span>
-            <a href="{{secure_url('/')}}/{{$feeds['username'].$feeds['link']}}" class="no-decoration">
+            <a href="@if($isLocal) {{url('/')}}/{{$feeds['username'].$feeds['link']}} @else {{secure_url('/')}}/{{$feeds['username'].$feeds['link']}} @endif" class="no-decoration">
               <h5 class="font-weight-bold on-hover">{{\Illuminate\Support\Str::title($feeds['title'])}}</h5>
             </a>
             <p class="mb-1">
@@ -25,7 +25,7 @@
             <div class="row">
               <span class="col-12 col-sm-6 col-md-8">
                 <small>
-                <a href="{{secure_url('/')}}/{{$feeds['username']}}" class="text-muted">{{$feeds['site']}}</a>
+                <a href="@if($isLocal) {{url('/')}}/{{$feeds['username']}} @else {{secure_url('/')}}/{{$feeds['username']}}@endif" class="text-muted">{{$feeds['site']}}</a>
                 <span class="font-weight-bold">.</span>
                 <span class="text-muted">{{$feeds['date']}}</span>
                 </small>
@@ -38,13 +38,13 @@
                 @endphp
                 @if(!empty($likes))
                 <span id="like{{$feeds['id']}}">
-                <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='fas fa-thumbs-up text-warning' style='font-size: 1.2em;'></i>
+                <button type='button' title='unlike this Post' onclick='like(0,{{$feeds["id"]}})' class='btn'><i class='fas fa-thumbs-up text-secondary' style='font-size: 1.2em;'></i>
                 <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
                 </button></span>
                 @else
                 <span id="like{{$feeds['id']}}">
                   <button type="button" title="like this Post" onclick='like(1,{{ $feeds["id"] }})' class="btn">
-                    <i class="fas fa-thumbs-up text-secondary" style="font-size: 1.2em;"></i>
+                    <i class='fas fa-thumbs-up' style='font-size: 1.2em;'></i>
                     <sub id="lcount{{$feeds['id']}}">{{ $lcount }}</sub>
                   </button>
                 </span>
@@ -58,13 +58,13 @@
                 @if(!empty($love))
                 <span id="love{{$feeds['id']}}">
                 <button type='button' title='unlove this Post' onclick='love(0,{{$feeds["id"]}})' class='btn'>
-                  <i class="fas fa-heart text-danger" style="font-size: 1.2em;"></i>
+                  <i class='fas fa-heart text-secondary' style="font-size: 1.2em;"></i>
                 <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
                 </button></span>
                 @else
                 <span id="love{{$feeds['id']}}">
                   <button type="button" title="love this Post" onclick='love(1,{{ $feeds["id"] }})' class="btn">
-                    <i class="fas fa-heart text-secondary" style="font-size: 1.2em;"></i>
+                    <i class='fas fa-heart'style="font-size: 1.2em;"></i>
                     <sub id="count{{$feeds['id']}}">{{ $count }}</sub>
                   </button>
                 </span>
@@ -72,7 +72,7 @@
                 @php
                 $ccount = \Lucid\Notification::where(['post_id' => $feeds['id'],'action' => "Commented"])->count();
                 @endphp
-                <a href="{{secure_url('/')}}/{{$feeds['username'].$feeds['link']}}#comment">
+                <a href="@if($isLocal) {{url('/')}}/{{$feeds['username'].$feeds['link']}} @else {{secure_url('/')}}/{{$feeds['username'].$feeds['link']}}@endif#comment">
                   <button type="button"  class="btn">
                   <i class="fas fa-comments text-secondary" style="font-size: 1.2em;"></i>
                   <sub id="count{{$feeds['id']}}">{{ $ccount }}</sub>

@@ -31,7 +31,7 @@ $location= 'thoughts';
 @if(Auth::user() && Auth::user()->username == $user->username)
 <p>Write a thought</p>
 
-<form method="POST" action="{{secure_url($user->username.'/save-post')}}" autocomplete="off" enctype="multipart/form-data" class="mb-3">
+<form method="POST" action="@if($isLocal) {{ url($user->username.'/save-post')}} @else {{secure_url($user->username.'/save-post')}} @endif" autocomplete="off" enctype="multipart/form-data" class="mb-3">
   @csrf
   <div class="form-group">
     <textarea type="text" name="body" class="form-control h-25" placeholder="Tell your story"></textarea>

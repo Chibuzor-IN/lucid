@@ -64,14 +64,14 @@ $link = DB::table('notifications')->where(['post_id'=>$request->id,'sender_id'=>
 if ($link) {
   $output = "
 <span id='like$request->id'>
-<button type='button' title='unlike this Post' onclick='like(0,$request->id)' class='btn'><i class='icon ion-md-thumbs-up text-warning' style='font-size: 1.2em;'></i>
+<button type='button' title='unlike this Post' onclick='like(0,$request->id)' class='btn'><i class='fas fa-thumbs-up text-secondary' style='font-size: 1.2em;'></i>
 $count
 </button></span>
 ";
 }else {
     $output = "
   <span id='like$request->id'>
-  <button type='button' title='like this Post' onclick='like(1,$request->id)' class='btn'><i class='icon ion-md-thumbs-up' style='font-size: 1.2em;'></i>
+  <button type='button' title='like this Post' onclick='like(1,$request->id)' class='btn'><i class='fas fa-thumbs-up' style='font-size: 1.2em;'></i>
 $count
   </button></span>
   ";
@@ -131,7 +131,7 @@ if ($link) {
 $output = "
 <span id='love$request->id'>
   <button type='button' title='' onclick='love(0,$request->id)' class='btn'>
-    <i class='icon ion-md-heart text-danger' style='font-size: 1.2em;'></i>
+    <i class='fas fa-heart text-secondary' style='font-size: 1.2em;'></i>
     <sub id='count$request->id'> $count </sub>
   </button>
 </span>
@@ -140,7 +140,7 @@ $output = "
   $output = "
   <span id='love$request->id'>
     <button type='button' title='' onclick='love(1,$request->id)' class='btn'>
-      <i class='icon ion-md-heart' style='font-size: 1.2em;'></i>
+      <i class='fas fa-heart' style='font-size: 1.2em;'></i>
       <sub id='count$request->id'> $count </sub>
     </button>
   </span>

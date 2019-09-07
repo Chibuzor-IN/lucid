@@ -38,7 +38,7 @@ border:1px solid #9179ef;
 	<div class="container">
 		<div class="row justify-content-center">
 			<div class="col-lg-10">
-				<img src="{{ secure_asset('img/lucid-preview.jpg') }}" class="img-fluid lucid-laptop" alt="Lucid" />
+				<img src="@if($isLocal) {{ asset('img/lucid-preview.jpg') }} @else {{ secure_asset('img/lucid-preview.jpg') }}@endif" class="img-fluid lucid-laptop" alt="Lucid" />
 			</div>
 		</div>
 	</div>
@@ -55,7 +55,7 @@ border:1px solid #9179ef;
 		<div class="row text-white">
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/14019879701543984325.png') }}" alt="Tell Your Story on Lucid" class="img-fluid pb-4" />
+					<img src="@if($isLocal) {{ asset('img/14019879701543984325.png') }} @else {{ secure_asset('img/14019879701543984325.png') }}@endif" alt="Tell Your Story on Lucid" class="img-fluid pb-4" />
 					<h5>Tell Your Story on Lucid</h5>
 					<p>
 						Own a platform on Lucid. Your thoughts and ideas are very
@@ -65,7 +65,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/17101174831552994197.png ') }}" alt="You Are in Safe Hands" class="img-fluid pb-4" />
+					<img src="@if($isLocal) {{ asset('img/17101174831552994197.png ') }} @else {{ secure_asset('img/17101174831552994197.png ') }}@endif" alt="You Are in Safe Hands" class="img-fluid pb-4" />
 					<h5>You Are in Safe Hands</h5>
 					<p>
 						Whatever content you want on your website are made to last
@@ -76,7 +76,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/16143869721535958154.png') }}" alt="Your Right to Privacy" class="img-fluid pb-4" />
+					<img src="@if($isLocal) {{ asset('img/16143869721535958154.png') }} @else  {{ secure_asset('img/16143869721535958154.png') }}@endif" alt="Your Right to Privacy" class="img-fluid pb-4" />
 					<h5>Your Right to Privacy</h5>
 					<p>
 						Our goal is to help you believe that “privacy” is one of life’s
@@ -87,7 +87,7 @@ border:1px solid #9179ef;
 			</div>
 			<div class="col-md-6 my-3">
 				<div class="feat-col">
-					<img src="{{ secure_asset('img/4804552381535029667.png') }}" alt="In One Simple Set up" class="img-fluid pb-4" />
+					<img src="@if($isLocal) {{ asset('img/4804552381535029667.png') }} @else {{ secure_asset('img/4804552381535029667.png') }} @endif" alt="In One Simple Set up" class="img-fluid pb-4" />
 					<h5>In One Simple Set up</h5>
 					<p>
 						Create your domain in one setup with no intrusions, pop ups

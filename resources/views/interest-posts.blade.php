@@ -8,10 +8,17 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://unpkg.com/ionicons@4.5.9-1/dist/css/ionicons.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+  @if($isLocal)
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/lucid-logo.svg') }}">
+  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  @else
   <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/lucid-logo.svg') }}">
   <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
   <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
   <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
+  @endif
   <title>Explore</title>
 
   <style>
@@ -35,7 +42,7 @@
       <ul class="navbar-nav ml-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle pt-0" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="{{ secure_asset('img/lucid-logo.svg') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            <img src="@if($isLocal) {{ asset('img/lucid-logo.svg') }} @else {{ secure_asset('img/lucid-logo.svg') }} @endif" alt="The Lucid Logo" class="img-fluid" width="40px" />
           </a>
         </li>
       </ul>

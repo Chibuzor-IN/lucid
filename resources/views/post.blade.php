@@ -471,8 +471,13 @@ $location= 'post';
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/bootstrap-tokenfield.min.js"></script>
+@if($isLocal)
+<script src="{{ asset('js/posts.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/edit-post.js') }}" type="text/javascript"></script>
+@else
 <script src="{{ secure_asset('js/posts.js') }}" type="text/javascript"></script>
 <script src="{{ secure_asset('js/edit-post.js') }}" type="text/javascript"></script>
+@endif
 <script>
   function deletePost(post_id) {
     j('#deleteBtn').on('click',function(e){

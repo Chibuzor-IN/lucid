@@ -1162,7 +1162,7 @@ $user = Auth::user();
             $content['image'] = $first_img;
             $content['date']  =  $createdAt->format('M jS, Y h:i A');;
             $content['id'] = $post->id;
-            
+
             array_push($allPost,$content);
           }
           return $allPost;

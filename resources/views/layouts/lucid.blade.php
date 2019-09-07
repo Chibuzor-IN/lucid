@@ -46,13 +46,21 @@
   <title>@yield('title')</title>
 
 
-  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/lucid-logo.svg') }}">
+
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800&display=swap" rel="stylesheet" />
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet" />
+  @if($isLocal)
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ asset('img/lucid-logo.svg') }}">
+  <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/main-style.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/tabletcss.css') }}" rel="stylesheet">
+  @else
+  <link rel="short icon" type="image/png" sizes="16x16" href="{{ secure_asset('img/lucid-logo.svg') }}">
   <link href="{{ secure_asset('css/style.css') }}" rel="stylesheet">
   <link href="{{ secure_asset('css/main-style.css') }}" rel="stylesheet">
   <link href="{{ secure_asset('css/tabletcss.css') }}" rel="stylesheet">
+  @endif
   <link href="https://cdn.quilljs.com/1.3.4/quill.snow.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tokenfield/0.12.0/css/bootstrap-tokenfield.min.css">
@@ -199,7 +207,7 @@
             @endif
           </div>
           <div class="mt-3">
-            <a href="https://lucid.blog"> <small class="text-muted d-flex justify-content-center"><img src="{{ secure_asset('img/logo.jpg') }}" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" />
+            <a href="https://lucid.blog"> <small class="text-muted d-flex justify-content-center"><img src="@if($isLocal) {{ asset('img/lucid-logo.svg') }} @else {{ secure_asset('img/lucid-logo.svg') }} @endif" alt="Lucid" class="img-fluid" style="filter: grayscale(100%); height: 20px;" />
                 <p class="mb-0 ml-1">Powered by Lucid</p>
               </small></a>
           </div>
@@ -219,7 +227,7 @@
                 <br>
                 <h4 class="text-main">Unfollow {{$user->name}}</h4>
                 <p class="small"><em>Are you sure you want to Unfollow {{$user->name}} and miss out interesting post?<br /> Click the button below to unfollow</em></p>
-                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/unfollow">
+                <form method="POST" action="@if($isLocal) {{url('/')}}/{{$user->username}}/unfollow @else {{secure_url('/')}}/{{$user->username}}/unfollow @endif">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->name}}">
                   <button type="submit" class="btn btn-primary">UnFollow</button>
@@ -242,7 +250,7 @@
                 <br>
                 <h4 class="text-main">Follow {{$user->name}}</h4>
                 <p class="small"><em>Do you have or would love to have Lucid installed on your domain?<br /> Click the button below to follow me</em></p>
-                <form method="POST" action="{{secure_url('/')}}/{{$user->username}}/addrss">
+                <form method="POST" action="@if($isLocal) {{url('/')}}/{{$user->username}}/addrss @else {{secure_url('/')}}/{{$user->username}}/addrss @endif">
                   @csrf
                   <input type="hidden" name="rss" value="{{$user->username}}">
                   <button type="submit" class="btn btn-primary">Follow me on Lucid</button>
@@ -282,13 +290,21 @@
                 <div class="spinner" style=" padding: 20px;  width: 2vw;
     height: 2vw;"></div>
               </div>
+              @if($isLocal)
+              <a href="{{ url('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+              @else
               <a href="{{ secure_url('under-construction') }}" class="font-weight-bold mx-2 mt-3">View all</a>
+              @endif
             </div>
           </div>
           @endguest
           <div class="dropdown pt-2" id="lucid-dropdown">
             <a class="nav-link dropdown-toggle pt-1 cursor-pointer" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @if($isLocal)
+            <img src="{{ asset('img/lucid-logo.svg') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            @else
               <img src="{{ secure_asset('img/lucid-logo.svg') }}" alt="The Lucid Logo" class="img-fluid" width="40px" />
+            @endif
             </a>
             <div class="dropdown-menu dropdown-menu-right p-0" aria-labelledby="navbarDropdown">
               @guest
@@ -336,7 +352,7 @@
 
     function like(action, id) {
 
-      url = "{{ secure_url($user->username.'/like')  }}";
+      url = "@if($isLocal){{ url($user->username.'/like')}}@else{{ secure_url($user->username.'/like')}}@endif";
       //  id=id+"&act="+action;
       a.ajax({
           url: url,
@@ -359,7 +375,7 @@
 
     function love(action, id) {
 
-      url = "{{ secure_url($user->username.'/love')  }}";
+      url = "@if($isLocal){{ url($user->username.'/love')  }}@else{{ secure_url($user->username.'/love')  }}@endif";
       //  id=id+"&act="+action;
       a.ajax({
           url: url,
@@ -426,7 +442,7 @@
   <script>
     const s = jQuery.noConflict();
     s(document).ready(function() {
-      const check = "{{ secure_url($user->username.'/notif')  }}"
+      const check = "@if($isLocal){{ url($user->username.'/notif')  }}@else{{ secure_url($user->username.'/notif')  }}@endif"
 
       function load_unseen_notification(view = '') {
         s.ajaxSetup({
@@ -456,7 +472,7 @@
             //console.log('Fetch Error :-S', err);
           });
       }
-      const view_notif = "{{ secure_url($user->username.'/notif')  }}"
+      const view_notif = "@if($isLocal){{ url($user->username.'/notif')  }}@else{{ secure_url($user->username.'/notif')  }}@endif"
 
       s(document).on('click', '#load', function() {
         view = "";
