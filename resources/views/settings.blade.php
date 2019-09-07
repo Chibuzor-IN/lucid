@@ -118,10 +118,12 @@ $location= 'settings';
     <!-- links tab -->
     <div class="tab-pane fade" id="links" role="tabpanel">
       <div class="mt-3">
+      <!--
         <button class="btn border d-block my-4 w-50 text-light" style="background-color: #1da1f2;"><i class="icon ion-logo-twitter"></i> Connect to Twitter</button>
         <button class="btn border d-block my-4 w-50 text-white" style="background-color: #3b5998;"><i class="icon ion-logo-facebook"></i> Connect to Facebook</button>
         <button class="btn border d-block my-4 w-50 text-white" style="background-color: #c13584;"><i class="icon ion-logo-instagram"></i> Connect to Instagram</button>
         <button class="btn border d-block my-4 w-50 text-white" style="background-color: #0077b5;"><i class="icon ion-logo-linkedin"></i> Connect to LinkedIn</button>
+      -->
       </div>
   </div>
   <!-- security tab -->
