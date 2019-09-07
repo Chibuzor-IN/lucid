@@ -817,7 +817,7 @@ $content ='';
     foreach ($users as $key => $value) {
       $content .='<url>
       <loc>'.url('/').'/'.$value->username.'</loc>
-      <lastmod>'.$value->updated_at.'</lastmod></url>';
+      <lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime($value->updated_at)).'</lastmod></url>';
     };
   $content .='
   </urlset>' ;
@@ -847,7 +847,7 @@ $content ='';
     <news:name>'.\Illuminate\Support\Str::title($this->clean($user->name)).'&apos;s Blog</news:name>
     <news:language>en</news:language>
     </news:publication>
-    <news:publication_date>'.$value->created_at.'</news:publication_date>
+    <news:publication_date>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime($value->created_at)).'</news:publication_date>
     <news:title><![CDATA['.$value->title.']]></news:title>
     </news:news></url>';
   };
@@ -864,15 +864,15 @@ $content ='';
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <sitemap>
 <loc>'.url('/').'/sitemap_users.xml</loc>
-<lastmod>'.now().'</lastmod>
+<lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime(now())).'</lastmod>
 </sitemap>
 <sitemap>
 <loc>'.url('/').'/sitemap_feeds.xml</loc>
-<lastmod>'.now().'</lastmod>
+<lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime(now())).'</lastmod>
 </sitemap>
 <sitemap>
 <loc>'.url('/').'/sitemap.xml</loc>
-<lastmod>'.now().'</lastmod>
+<lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime(now())).'</lastmod>
 </sitemap>
 </sitemapindex>';
 return response($content, 200)
@@ -885,11 +885,11 @@ return response($content, 200)
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
       <url>
         <loc>'.url('/').'</loc>
-        <lastmod>'.now().'</lastmod>
+        <lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime(now())).'</lastmod>
       </url>
       <url>
         <loc>'.url('/').'/explore</loc>
-        <lastmod>'.now().'</lastmod>
+        <lastmod>'.gmdate('Y-m-d\TH:i:s+00:00', strtotime(now())).'</lastmod>
       </url>
     </urlset>';
 return response($content, 200)
