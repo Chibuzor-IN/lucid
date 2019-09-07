@@ -87,7 +87,7 @@ $location= 'singlePost';
             <script type="IN/Share" data-url="https://www.linkedin.com"></script>
         </div>
     </div>
-    <div>
+    <div class="d-flex">
       @auth
       @php
       $lcount = \Lucid\Notification::where(['post_id' => $post['id'],'action' => "Like"])->count();
