@@ -133,6 +133,16 @@
  gtag('js', new Date());
  gtag('config', 'UA-28315089-7');
 </script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-147415822-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-147415822-1');
+</script>
 </body>
 
 </html>
